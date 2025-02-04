@@ -1,0 +1,64 @@
+{% extends "admin_tontine/base.html" %}
+{% block content %}
+<div class="wrapper">
+    {% include "admin_tontine/seidebar.html" %}
+    <div class="main-panel">
+        {% include "admin_tontine/navbar.html" %}
+        <div class="container d-flex justify-content-center " style="margin-top: 90px;">
+            <div class="col-md-8">
+                <div class="card shadow-lg">
+                    <div class="card-header bg-primary text-white text-center">
+                        <h4 class="card-title mb-0">Tontine ( {{ tontine.name }} )</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="text-center mb-4">
+                            <img 
+                                width="200" 
+                                height="200" 
+                                class="img img-thumbnail" 
+                                src="{{ tontine.qr_code.url }}" 
+                                alt="QR Code Tontine"
+                            >
+                        </div>
+                        <div class="text-center mb-4">
+                            <p class="mb-2">
+                                <strong>Lien de la tontine :</strong>
+                            </p>
+                            <div class="input-group">
+                                <input 
+                                    type="text" 
+                                    id="tontine-link" 
+                                    class="form-control" 
+                                    value="{{ link }}" 
+                                    readonly 
+                                >
+                                <button 
+                                    class="btn btn-info" 
+                                    onclick="copyToClipboard()"
+                                >
+                                    <i class="fa fa-copy"></i> Copier
+                                </button>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <a href="{% url 'tontine:detail_tontine' tontine.uid %}" class="btn btn-secondary">
+                                <i class="fa fa-home"></i> Retour
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function copyToClipboard() {
+        const linkInput = document.getElementById("tontine-link");
+        linkInput.select();
+        linkInput.setSelectionRange(0, 99999);
+        document.execCommand("copy");
+        alert("Lien copié : " + linkInput.value);
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends "admin_tontine/base.html" %}
+{% block content %}
+<div class="container d-flex justify-content-center">
+    <div class="col-md-6 mt-5">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title text-center">Adesion a la tontine  {{tontine.name}}</h4>
+            </div>
+            <div class="card-body">
+                <h3 class="text-center">Etes vous sur de bien vouloir rejoindre cette tontine ?</h3>
+                <form action="{% url 'tontine:joined_tontine' tontine.uid %}" method="post">
+                    {% csrf_token%}
+                    <div class="control d-flex justify-content-center">
+                        <button type="submit" class="btn btn-outline-success m-2">rejoindre</button>
+                        <a href="{% url 'admin_tontine:dashboard' %} " class="btn btn-outline-danger m-2">Annuler</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+</div>
+
+{% endblock  %}

@@ -1,0 +1,12 @@
+Bonjour {{ user.first_name }} {{ user.last_name }},
+
+Merci de vous être inscrit sur notre plateforme ! 
+
+Pour activer votre compte, veuillez cliquer sur le lien ci-dessous :
+
+[Activer mon compte](http://{{ domaine }}{% url 'account:activation' uid=uid token=token %})
+
+Nous sommes ravis de vous accueillir parmi nous.
+
+Cordialement,  
+L'équipe de [Tontine]
