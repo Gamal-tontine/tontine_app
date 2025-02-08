@@ -1,7 +1,7 @@
 from django.urls import path
 
 from .views import CreateTontineView,JoingedTontineView,DetailTontineView,PageLinkTontineView,DeleteTontineView
-from .views import UpdateTontineView
+from .views import UpdateTontineView,demarrer_tontine
 
 app_name = 'tontine'
 urlpatterns = [
@@ -11,5 +11,5 @@ urlpatterns = [
     path('Lien-join-tontine/<str:uid>',PageLinkTontineView.as_view(),name='link_join_tontine'),
     path('delete-tontine/<str:uid>/',DeleteTontineView.as_view(),name='delete_tontine'),
     path('update-tontine/<str:uid>/',UpdateTontineView.as_view(),name='update_tontine'),
-    
+    path('damare/<str:uid>',demarrer_tontine,name='demarer'),
 ]

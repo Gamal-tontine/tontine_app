@@ -1,3 +1,10 @@
 from django.contrib import admin
+from .models import Acquitement, Payment
 
-# Register your models here.
+@admin.register(Acquitement)
+class AuthorAdmin(admin.ModelAdmin):
+    pass
+
+@admin.register(Payment)
+class AuthorAdmin(admin.ModelAdmin):
+    pass

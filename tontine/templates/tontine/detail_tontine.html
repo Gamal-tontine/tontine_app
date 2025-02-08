@@ -39,6 +39,10 @@
                     <div class="left-content">
                       <div class="card-title">
                         {{tontine.name}} | <span class="text-danger ">Montant: {{tontine.amount}} GNF</span> 
+                        <p> <i>Creer le : {{tontine.create_at |date:"D d M Y"}}</i> 
+                          <br> <i>La date de fin : {{tontine.end_date |date:"D d M Y"}}</i> 
+                          <br> la frequence : {{tontine.frequence}}
+                        </p>
                       </div>
                       <div class="card-category">{{tontine.description}} </div>
                     </div>
@@ -52,7 +56,7 @@
                       {% endif %}
                       <!-- Demarer -->
                       {% if is_full %}
-                        <a href="" style="color: rgb(26, 251, 37); max-width: 50px; margin-right: 10px;">
+                        <a href="{% url 'tontine:demarer' tontine.uid %}" style="color: rgb(26, 251, 37); max-width: 50px; margin-right: 10px;">
                           <i class="fas fa-play-circle"></i>
                         </a>
                       {% else %}
@@ -318,7 +322,7 @@
                               </tr>
                             </tfoot>
                             <tbody>
-                              {% for user, amount in non_payers_amounts.items %}
+                              {% for user, amount in members_due_amounts.items %}
                               <tr>
                                 <td> {{ user.first_name }} {{ user.last_name }} </td>
                                 <td class="text-danger"> {{ amount }} GNF</td>

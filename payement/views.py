@@ -8,7 +8,7 @@ from django.core.mail import send_mail
 from config.settings import DEFAULT_FROM_EMAIL
 from tontine.models import TontineCollective
 from account.models import User
-from .froms import AcquitementForm
+from .forms import AcquitementForm
 from .models import Acquitement
 
 class AcquitementView(View):

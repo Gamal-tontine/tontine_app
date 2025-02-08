@@ -1,0 +1,68 @@
+# tontine/templates/tontine/base.html
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tontine Individuelle</title>
+</head>
+<body>
+    <header>
+        <h1>Tontine Individuelle</h1>
+        <nav>
+            <a href="{% url 'home' %}">Accueil</a>
+            <a href="{% url 'deposit' %}">Faire un dépôt</a>
+        </nav>
+    </header>
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>
+
+# tontine/templates/tontine/home.html
+{% extends 'tontine/base.html' %}
+{% block content %}
+<h2>Bienvenue, {{ owner.user.username }} !</h2>
+<p>Solde actuel : {{ owner.balance }} FCFA</p>
+
+{% if today_reminder %}
+    <div>
+        <h3>Rappel du jour :</h3>
+        <p>{{ today_reminder.message }}</p>
+        {% if not today_reminder.is_paid %}
+            <p style="color: red;">Vous n'avez pas encore payé aujourd'hui.</p>
+        {% else %}
+            <p style="color: green;">Vous avez payé aujourd'hui.</p>
+        {% endif %}
+    </div>
+{% endif %}
+
+<h3>Historique des dépôts :</h3>
+<ul>
+    {% for deposit in deposits %}
+        <li>{{ deposit.date }} - {{ deposit.amount }} FCFA</li>
+    {% endfor %}
+</ul>
+{% endblock %}
+
+# tontine/templates/tontine/deposit.html
+{% extends 'tontine/base.html' %}
+{% block content %}
+<h2>Faire un dépôt</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Déposer</button>
+</form>
+{% endblock %}
+
+# tontine/urls.py
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('', views.home, name='home'),
+    path('deposit/', views.deposit, name='deposit'),
+]
+
