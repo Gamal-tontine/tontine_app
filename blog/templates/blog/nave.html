@@ -1,0 +1,30 @@
+ {% load static %}
+ <!--header section start -->
+  <div class="header_section header_bg">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="logo"><a href="index.html"><img src="{% static 'blog/images/logo.png' %}"></a></div>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a class="nav-link" href=" {% url "blog:index" %} ">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href=" {% url "blog:about" %} ">About</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href=" {% url "blog:services" %} ">Services</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href=" {% url "blog:team" %} ">Team</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href=" {% url "blog:contact" %}">Contact Us</a>
+          </li>
+        </ul>
+    </div>
+    </nav>
+</div>
+<!--header section end -->

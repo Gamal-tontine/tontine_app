@@ -1,0 +1,31 @@
+{% extends "blog/base.html" %}
+{% load static %}
+{% block content %}
+
+{% include "blog/nave.html" %}
+
+<!-- contact section start -->
+    <div class="contact_section layout_padding">
+      <div class="container-fluid">
+        <h1 class="what_taital">Contact us</h1>
+        <p class="amet_text">amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore </p>
+        <div class="contact_section2">
+          <div class="row">
+            <div class="col-md-6 padding_left_0">
+              <div class="mail_section">
+                <input type="" class="mail_text_1" placeholder="Name" name="Name">
+                <input type="" class="mail_text_1" placeholder="Phone Number" name="Phone Number">
+                <input type="" class="mail_text_1" placeholder="Email" name="Email">
+                <textarea class="massage_text" placeholder="Message" rows="5" id="comment" name="Message"></textarea>
+                <div class="send_bt"><a href="#">send</a></div>
+              </div>
+            </div>
+            <div class="col-md-6 padding_0">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- contact section end -->
+     {% include "blog/footer.html" %}
+{% endblock %}
