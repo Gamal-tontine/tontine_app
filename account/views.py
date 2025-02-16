@@ -8,6 +8,7 @@ from django.urls import reverse_lazy
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import force_bytes
+from django.contrib.auth import logout
 
 from .utils.decrypte import decrypte_token
 from .forms import CreateForm, LoginForm, AccountFindForPasswordForm,NewPasswordForm
@@ -33,28 +34,16 @@ class CreateUserView(CreateView):
 class LoginView(LoginView):
     authentication_form = LoginForm
     success_url = reverse_lazy('admin_tontine:dashboard')
+    user_dashboard_link = reverse_lazy('user_tontine:user_dashboard')
     template_name = 'account/singin.html'
+    
     def get_success_url(self):
-        return self.success_url
+        if self.request.user.statue == 'admin':
+            return self.success_url
+        else:
+            return self.user_dashboard_link
     
-    
-# class ActivationAccountView(View):
-#     def get(self,uid,token):
-#         id = urlsafe_base64_decode(force_bytes(uid))
-#         print('le id de ton compte est ',id)
-#         try:
-#             user = User.objects.get(pk = id)
-#         except ValueError:
-#             return render(request=self.request, template_name='account/error_activation.html')
-        
-#         if default_token_generator.check_token(user,token):
-#             user.is_active = True
-#             user.save()
-#             messages.success(request=self.request, message='Votre compte a été activer avec sucess')
-#             return redirect('account:singin')
-#         else:
-#             return render(request=self.request, template_name='account/error_activation.html')
-        
+            
 class ActivationAccountView(View):
     def get(self, request, uid, token):
         id = urlsafe_base64_decode(uid)
@@ -67,7 +56,7 @@ class ActivationAccountView(View):
             user.is_active = True
             user.save()
             messages.success(request=self.request, message='Votre compte a été activé avec succès')
-            return redirect('account:signin')
+            return redirect('account:singin')
         else:
             return render(request=self.request, template_name='account/error_activation.html')
 
@@ -135,4 +124,16 @@ class NewPasswordView(View):
                 self.user.set_password(password)
                 self.user.save()
             messages.success(request,'le mot de passe a été changer avec succes')
-            return redirect('')
+            return redirect('account:singin')
+        
+def profil(request):
+    user = request.user
+    return render(request, 'account/profil.html', {'user':user})
+
+
+class LogOutView(View):
+    def get(self,request):
+        logout(request=request)
+        return redirect('account:singin')
+    
+    

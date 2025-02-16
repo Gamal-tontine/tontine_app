@@ -15,59 +15,11 @@
                 <h6 class="op-7 mb-2">Tontine app</h6>
               </div>
               <div class="ms-md-auto py-2 py-md-0">
-                <a href="#" type="button" data-bs-toggle="modal" data-bs-target="#IndividuelleModal"  class="btn btn-info btn-round me-2">
-                  <i class="fas fa-plus"></i>
-                  Individuelle</a>
-
-                <a href="#" type="button" data-bs-toggle="modal" data-bs-target="#collectiveModal"  class="btn btn-primary btn-round"> 
-                  <i class="fas fa-plus"></i> Collective
-                </a>
+                <!-- la partie de creation des tontines -->
               </div>
 
               <!-- Modal pour la creation de tontine Individuelle-->
-                <div class="modal fade" id="IndividuelleModal" tabindex="-1" aria-labelledby="IndividuelleModalLabel" aria-hidden="true">
-                  <div class="modal-dialog">
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="IndividuelleModalLabel">Nouvelle tontine Individuelle</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                      </div>
-                      <form action="{% url 'tontine_individuelle:create_tontine_individuelle' %}" method="post">
-                        {%csrf_token%}
-                      <div class="modal-body">
-                        {{tontine_individuelle_form.as_p}}
-                      </div>
-                      <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                        <button type="submit" type="button" class="btn btn-primary">Creer la tontine</button>
-                      </div>
-                    </form>
-                    </div>
-                  </div>
-                </div>
-              <!-- fin du modal -->
-
-              <!-- Modal pour la creation de tontine collective-->
-                <div class="modal fade" id="collectiveModal" tabindex="-1" aria-labelledby="collectiveModalLabel" aria-hidden="true">
-                  <div class="modal-dialog">
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="collectiveModalLabel">Nouvelle tontine collective</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                      </div>
-                      <form action="{% url 'tontine:create_tontine' %}" method="post">
-                        {%csrf_token%}
-                      <div class="modal-body">
-                        {{form.as_p}}
-                      </div>
-                      <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                        <button type="submit" type="button" class="btn btn-primary">Creer la tontine</button>
-                      </div>
-                    </form>
-                    </div>
-                  </div>
-                </div>
+                
               <!-- fin du modal -->
 
 
@@ -88,11 +40,7 @@
                         <div class="numbers">
                           <p class="card-category">Tontine Active</p>
                           <h4 class="card-title">
-                            {% if tontine.unfinished_tontines_count %}
-                              {{tontine.unfinished_tontines_count}}
-                            {% else %}
-                              0
-                            {% endif %}
+                            <!-- la tontine active -->
                           </h4>
                         </div>
                       </div>
@@ -115,11 +63,7 @@
                         <div class="numbers">
                           <p class="card-category">Tontine fermer</p>
                           <h4 class="card-title">
-                            {% if tontine.finished_tontines_count %}
-                              {{tontine.finished_tontines_count}}
-                            {% else %}
-                              0
-                            {% endif %}
+                            <!-- les tontines fermers -->
                           </h4>
                         </div>
                       </div>
@@ -142,11 +86,7 @@
                         <div class="numbers">
                           <p class="card-category">Tontine Totale</p>
                           <h4 class="card-title">
-                            {% if tontine.total_tontines_count %}
-                              {{tontine.total_tontines_count}}
-                            {% else %}
-                              0
-                            {% endif %}
+                            <!-- tontine totale -->
                           </h4>
                         </div>
                       </div>
@@ -224,23 +164,23 @@
                           </tr>
                         </thead>
                         <tbody>
-                          {% for tontine in tontines %}
+                          {% for tontine_collective in tontine_collectives %}
                           <tr>
                             <th scope="row">
-                              <a href="{% url 'tontine:detail_tontine' tontine.uid %}" class="btn btn-icon btn-round btn-success btn-sm me-2">
+                              <a href="{% url 'user_tontine:tontine_collective' tontine_collective.uid %}" class="btn btn-icon btn-round btn-success btn-sm me-2">
                                 <i class="fa fa-hand-holding-usd"></i>
                               </a>
                               {{tontine.name}}
                             </th>
-                            <td class="text-end"> {{tontine.create_at}} </td>
-                            <td class="text-center"> {{tontine.total_members}} / {{tontine.limite_member}} </td>
-                            <td class="text-center">{{tontine.amount}} GNF</td>
+                            <td class="text-end"> {{tontine_collective.create_at}} </td>
+                            <td class="text-center"> {{tontine_collective.total_members}} / {{tontine_collective.limite_member}} </td>
+                            <td class="text-center">{{tontine_collective.amount}} GNF</td>
                             
                             <!-- debut de la colonne status -->
                             <td class="text-end">
-                              {% if tontine.is_finished %}
+                              {% if tontine_collective.is_finished %}
                                   <span class="badge badge-success">Fermer</span>
-                              {% elif tontine.is_full %}
+                              {% elif tontine_collective.is_full %}
                                   <span class="badge badge-danger">En cours</span>
                               {% else %}
                                   <span class="badge badge-info">Inscription</span>
@@ -250,10 +190,10 @@
                           
                           <!-- colonne pour les actions -->
                           <td class="text-center">
-                              {% if tontine.is_finished %}
+                              {% if tontine_collective.is_finished %}
                                   <a href="" class="btn btn-warning">Relancer</a>
                               {% elif is_full %}
-                                  <a href="{% url 'demarrer_tontine' tontine.id %}" class="btn btn-success">Démarrer</a>
+                                  <a href="{% url 'demarrer_tontine' tontine_collective.id %}" class="btn btn-success">Démarrer</a>
                               {% else %}
                                   <span class="badge badge-info">En attente</span>
                               {% endif %}
@@ -267,36 +207,6 @@
                           
                         </tbody>
                       </table>
-                      <!-- Pagination pour les tontines collectives -->
-                      <div class="pagination justify-content-center">
-                              <ul class="pagination">
-                                  {% if tontines.has_previous %}
-                                      <li class="page-item">
-                                          <a class="page-link" href="?page=1" aria-label="First">&laquo; Première</a>
-                                      </li>
-                                      <li class="page-item">
-                                          <a class="page-link" href="?page={{ tontines.previous_page_number }}" aria-label="Previous">Précédente</a>
-                                      </li>
-                                  {% endif %}
-
-                                  <!-- Page actuelle -->
-                                  <li class="page-item disabled">
-                                      <span class="page-link">Page {{ tontines.number }} sur {{ tontines.paginator.num_pages }}</span>
-                                  </li>
-
-                                  {% if tontines.has_next %}
-                                      <li class="page-item">
-                                          <a class="page-link" href="?page={{ tontines.next_page_number }}" aria-label="Next">Suivante</a>
-                                      </li>
-                                      <li class="page-item">
-                                          <a class="page-link" href="?page={{ tontines.paginator.num_pages }}" aria-label="Last">Dernière &raquo;</a>
-                                      </li>
-                                  {% endif %}
-                              </ul>
-                          </div>
-
-                        <!-- la fin de la pagination -->
-
                     </div>
                   </div>
                 </div>
@@ -335,7 +245,7 @@
                           {% for tontine_individuelle in tontine_individuelles %}
                           <tr>
                             <th scope="row">
-                              <a href="{% url 'tontine_individuelle:datail_tontine_individuelle' tontine_individuelle.uid %}" class="btn btn-icon btn-round btn-success btn-sm me-2">
+                              <a href="{% url 'user_tontine:tontine_individuelle' tontine_individuelle.uid %}" class="btn btn-icon btn-round btn-success btn-sm me-2">
                                 <i class="fa fa-hand-holding-usd"></i>
                               </a>
                               {{tontine_individuelle.name}}
@@ -369,36 +279,6 @@
 
                         </tbody>
                       </table>
-
-                      <!-- Pagination des tontines individuelles -->
-                      <div class="pagination justify-content-center">
-                            <ul class="pagination">
-                                {% if tontine_individuelles.has_previous %}
-                                    <li class="page-item">
-                                        <a class="page-link" href="?page_individuelle=1" aria-label="First">&laquo; Première</a>
-                                    </li>
-                                    <li class="page-item">
-                                        <a class="page-link" href="?page_individuelle={{ tontine_individuelles.previous_page_number }}" aria-label="Previous">Précédente</a>
-                                    </li>
-                                {% endif %}
-
-                                <!-- Page actuelle centrée -->
-                                <li class="page-item disabled">
-                                    <span class="page-link">Page {{ tontine_individuelles.number }} sur {{ tontine_individuelles.paginator.num_pages }}</span>
-                                </li>
-
-                                {% if tontine_individuelles.has_next %}
-                                    <li class="page-item">
-                                        <a class="page-link" href="?page_individuelle={{ tontine_individuelles.next_page_number }}" aria-label="Next">Suivante</a>
-                                    </li>
-                                    <li class="page-item">
-                                        <a class="page-link" href="?page_individuelle={{ tontine_individuelles.paginator.num_pages }}" aria-label="Last">Dernière &raquo;</a>
-                                    </li>
-                                {% endif %}
-                            </ul>
-                        </div>
-
-                      <!-- fin de la pagination -->
 
                     </div>
                   </div>

@@ -12,6 +12,8 @@ urlpatterns = [
     path('tontine/',include('tontine.urls')),
     path('',include('blog.urls')),
     path('admin_tontine/',include('admin_tontine.urls')),
+    path('tontine_individuelle/',include('tontine_individuelle.urls')),
+    path('user-tontine/',include('user_tontine.urls')),
 ]
 
 

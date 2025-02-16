@@ -11,7 +11,7 @@
             <h3 class="fw-bold mb-3">Detail Tontine</h3>
             <ul class="breadcrumbs mb-3">
               <li class="nav-home">
-                <a href=" {% url 'admin_tontine:dashboard' %} ">
+                <a href=" {% url 'user_tontine:user_dashboard' %} ">
                   <i class="icon-home"></i>
                 </a>
               </li>
@@ -59,7 +59,7 @@
                               <h1 class="modal-title fs-5" id="payementModalLabel">Paiement des frais de la tontine</h1>
                               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
-                            <form action="{% url 'payement:acquitement_tontine_individuelle_admin' tontine.uid %}" method="post">
+                            <form action="{% url 'payement:acquitement_tontine_individuelle_user' tontine.uid %}" method="post">
                               {% csrf_token %}
                               <div class="modal-body">
                                 {{ acquitementform.as_p }}
@@ -74,40 +74,6 @@
                       </div>
                       <!-- Fin du modal -->
                                     
-
-
-                      <!-- la modification de la tontine -->
-                      {% if not is_full %}
-                       <a href="{% url 'tontine_individuelle:update_tontine_individuelle' tontine.uid %}">
-                          <i class="fa fa-edit" style="color: rgb(26, 97, 251); max-width: 50px; margin-right: 10px;"></i>
-                       </a>
-                       {% endif %}
-                      <!-- supprimer la tontine -->
-                        <i class="fas fa-trash "  data-bs-toggle="modal" data-bs-target="#deleteModal" style="color: red; max-width: 50px; margin-right: 10px;"> </i>
-
-                        <!-- Début du modal pour la suppression -->
-                        <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-                          <div class="modal-dialog">
-                            <div class="modal-content">
-                              <div class="modal-header">
-                                <h1 class="modal-title fs-5" id="deleteModalLabel">Suppression</h1>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                              </div>
-                              <form method="post" action="{% url 'tontine_individuelle:delete_tontine_individuelle' tontine.uid %}">
-                                {% csrf_token %}
-                                <div class="modal-body">
-                                  Etes vous sûr de bien vouloir supprimer cette tontine?
-                                  La suppression de cette tontine engendrera egalement la perte de toutes les infos lier a cette tontine
-                                </div>
-                                <div class="modal-footer">
-                                  <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Annuler</button>
-                                  <button type="submit" class="btn btn-danger">Supprimer</button>
-                                </div>
-                              </form>
-                            </div>
-                          </div>
-                        </div>
-                        <!-- Fin du modal pour la suppression -->
                     </div>
                   </div>
 
@@ -213,37 +179,6 @@
                     </div>
                   </div> 
                   
-                  <!-- la partie pour le paiement du la tontine -->
-                  {% if  tontine.objectif == tontine.balance %}
-                  <div class='row d-flex justify-content-center'>
-                    <div class="col-sm-6 col-md-4">
-                      <div class="card card-stats card-info card-round">
-                        <div class="card-body">
-                          <div class="row">
-                            <div class="col-5">
-                              <div class="icon-big text-center">
-                                <i class="fa fa-money-bill-wave"></i>
-                              </div>
-                            </div>
-                            <div class="col-7 col-stats">
-                              <div class="numbers">
-                                <h4 class="card-title">  </h4>
-                                <a href="{% url 'payement:payement_tontine_individuelle' tontine.uid %}" class="bg-warning-gradient" style="padding: 6px; border-radius: 12pxy;">
-                                  <i class="fas fa-money-check-alt"></i>
-                                  Payer
-                                </a>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <!-- la fin de la partie pour le paiement -->
-                  {% endif %}
-
-                  <!-- fin des details sur la tontine -->
-
                 </div>
 
 
@@ -257,7 +192,7 @@
                         </div>
                       </div>
                       <div class="card-body">
-    
+                        
                         <!-- la liste de tous les membres de la tontine -->
                         <div class="table-responsive">
                           <table
@@ -338,6 +273,8 @@
                 </div>
               {% endfor %}
             {% endif %}
+
+
 
         <script>
           // Affichage automatique des toasts au chargement

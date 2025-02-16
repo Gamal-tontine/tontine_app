@@ -42,6 +42,7 @@ INSTALLED_APPS = [
 
     'account',
     'admin_tontine',
+    'user_tontine',
     'tontine',
     'blog',
     'payement',

@@ -5,27 +5,30 @@
 {% include "blog/nave.html" %}
 
 <!-- contact section start -->
-    <div class="contact_section layout_padding">
-      <div class="container-fluid">
-        <h1 class="what_taital">Contact us</h1>
-        <p class="amet_text">amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore </p>
-        <div class="contact_section2">
-          <div class="row">
-            <div class="col-md-6 padding_left_0">
-              <div class="mail_section">
-                <input type="" class="mail_text_1" placeholder="Name" name="Name">
-                <input type="" class="mail_text_1" placeholder="Phone Number" name="Phone Number">
-                <input type="" class="mail_text_1" placeholder="Email" name="Email">
-                <textarea class="massage_text" placeholder="Message" rows="5" id="comment" name="Message"></textarea>
-                <div class="send_bt"><a href="#">send</a></div>
-              </div>
-            </div>
-            <div class="col-md-6 padding_0">
-            </div>
+<div class="contact_section layout_padding">
+  <div class="container-fluid">
+    <h1 class="what_taital">Contactez-nous</h1>
+    <p class="amet_text">Pour toute question sur nos tontines collectives ou individuelles, nos experts sont disponibles pour vous aider. Nous nous engageons à répondre rapidement à vos demandes.</p>
+    <div class="contact_section2">
+      <div class="row">
+        <div class="col-md-6 padding_left_0">
+          <div class="mail_section">
+            <input type="text" class="mail_text_1" placeholder="Nom" name="Name">
+            <input type="text" class="mail_text_1" placeholder="Numéro de téléphone" name="Phone Number">
+            <input type="email" class="mail_text_1" placeholder="Email" name="Email">
+            <input type="text" class="mail_text_1" placeholder="Objet (ex: Tontine Collective, Demande de retrait, etc.)" name="Subject">
+            <textarea class="massage_text" placeholder="Message" rows="5" id="comment" name="Message"></textarea>
+            <div class="send_bt"><a href="#">Envoyer</a></div>
           </div>
+        </div>
+        <div class="col-md-6 padding_0">
+          <!-- Optionnellement ajouter une carte ici pour indiquer l'emplacement physique si nécessaire -->
         </div>
       </div>
     </div>
-    <!-- contact section end -->
-     {% include "blog/footer.html" %}
+  </div>
+</div>
+<!-- contact section end -->
+
+{% include "blog/footer.html" %}
 {% endblock %}

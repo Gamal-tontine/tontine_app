@@ -11,7 +11,7 @@
             <h3 class="fw-bold mb-3">Detail Tontine</h3>
             <ul class="breadcrumbs mb-3">
               <li class="nav-home">
-                <a href=" {% url 'admin_tontine:dashboard' %} ">
+                <a href=" {% url 'user_tontine:user_dashboard' %} ">
                   <i class="icon-home"></i>
                 </a>
               </li>
@@ -48,61 +48,7 @@
                     </div>
                     <!-- le contenu de la droite sur les details -->
                     <div class="right-content " style="margin-left: auto;">
-                      <!-- relancer -->
-                      {% if tontine.is_finished %}
-                        <a href="" style="color: rgb(251, 243, 26); max-width: 50px; margin-right: 10px;">
-                          <i class="fas fa-redo"></i>
-                        </a>
-                      {% endif %}
-                      <!-- Demarer -->
-                      {% if is_full %}
-                        <a href="{% url 'tontine:demarer' tontine.uid %}" style="color: rgb(26, 251, 37); max-width: 50px; margin-right: 10px;">
-                          <i class="fas fa-play-circle"></i>
-                        </a>
-                      {% else %}
-                      <!-- en attente -->
-                        <span style="color: rgb(26, 97, 251); max-width: 50px; margin-right: 10px;">
-                          <i class="fas fa-hourglass-half"></i>
-                        </span>
-                      {% endif %}
-                      <!-- la modification de la tontine -->
-                      {% if not is_full %}
-                       <a href="{% url 'tontine:update_tontine' tontine.uid %}">
-                          <i class="fa fa-edit" style="color: rgb(26, 97, 251); max-width: 50px; margin-right: 10px;"></i>
-                       </a>
-                       {% endif %}
-                      <!-- supprimer la tontine -->
-                        <i class="fas fa-trash "  data-bs-toggle="modal" data-bs-target="#deleteModal" style="color: red; max-width: 50px; margin-right: 10px;"> </i>
-
-                        <!-- Début du modal pour la suppression -->
-                        <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-                          <div class="modal-dialog">
-                            <div class="modal-content">
-                              <div class="modal-header">
-                                <h1 class="modal-title fs-5" id="deleteModalLabel">Suppression</h1>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                              </div>
-                              <form method="post" action="{% url 'tontine:delete_tontine' tontine.uid %}">
-                                {% csrf_token %}
-                                <div class="modal-body">
-                                  Etes vous sûr de bien vouloir supprimer cette tontine?
-                                  La suppression de cette tontine engendrera egalement la perte de toutes les infos lier a cette tontine
-                                </div>
-                                <div class="modal-footer">
-                                  <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Annuler</button>
-                                  <button type="submit" class="btn btn-danger">Supprimer</button>
-                                </div>
-                              </form>
-                            </div>
-                          </div>
-                        </div>
-                        <!-- Fin du modal pour la suppression -->
                       
-
-                      <!-- informations sur la tontine -->
-                      <a href="{% url 'tontine:link_join_tontine' tontine.uid %}">
-                        <i class="fas fa-question-circle" style="color: rgb(41, 202, 251); max-width: 50px;"> </i>
-                      </a>
                     </div>
                   </div>
 
@@ -223,12 +169,6 @@
                             <div class="col-7 col-stats">
                               <div class="numbers">
                                 <h4 class="card-title"> {{tontine.next_recipient.last_name}} </h4>
-                                {% if tontine.payers.count == tontine.total_members %}
-                                <a href="" class="bg-warning-gradient" style="padding: 6px; border-radius: 12pxy;">
-                                  <i class="fas fa-money-check-alt"></i>
-                                  Payer
-                                </a>
-                                {% endif %}
                               </div>
                             </div>
                           </div>
@@ -291,7 +231,7 @@
                       </div>
                       <div class="card-body">
     
-                        <!-- la liste des membres qui nont pas payer la periode de la tontine -->
+                        <!-- la liste de tous les membres de la tontine -->
                         <div class="table-responsive">
                           <table
                             id="add-row"
@@ -341,7 +281,7 @@
                                             <h1 class="modal-title fs-5" id="payementModalLabel">Paiement des frais de la tontine</h1>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                           </div>
-                                          <form action="{% url 'payement:acquitement_collective_admin' tontine.uid user.id %}" method="post">
+                                          <form action="{% url 'payement:acquitement' tontine.uid user.id %}" method="post">
                                             {% csrf_token %}
                                             <div class="modal-body">
                                               {{ acquitement.as_p }}
@@ -539,36 +479,6 @@
         </div>
       </div>
     
-
-             <!-- Toast -->
-            {% if messages %}
-              {% for message in messages %}
-                <div id="liveToast{{ forloop.counter }}" class="toast align-items-center text-bg-dark border-0" role="alert" aria-live="assertive" aria-atomic="true" style="position: fixed; bottom: 10px; right: 10px; z-index: 1050;">
-                  <div class="toast-header">
-                   <i class="fa-regular fa-bell me-2"></i>
-                    <strong class="me-auto">Notifications</strong>
-                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Fermer"></button>
-                  </div>
-                  <div class="toast-body {% if 'success' in message.tags %} text-success {% else %} text-danger {% endif %}">
-                    {{ message }}
-                  </div>
-                </div>
-              {% endfor %}
-            {% endif %}
-
-        <script>
-          // Affichage automatique des toasts au chargement
-          window.addEventListener('load', () => {
-            {% for message in messages %}
-              const toastLiveExample = document.getElementById('liveToast{{ forloop.counter }}');
-              if (toastLiveExample) {
-                const toastBootstrap = new bootstrap.Toast(toastLiveExample, { delay: 5000 });
-                toastBootstrap.show();
-              }
-            {% endfor %}
-          });
-        </script>
-
 
   </div>
 </div>

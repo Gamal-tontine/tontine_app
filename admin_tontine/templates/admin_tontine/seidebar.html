@@ -32,7 +32,8 @@
     
                   <!-- le dashboard -->
                   <li class="nav-item active">
-                    <a href="{% url "admin_tontine:dashboard" %}" class="collapsed" >
+                    
+                    <a {% if request.user.statue == 'admin' %} href="{% url "admin_tontine:dashboard" %}" {% else %} href="{% url "user_tontine:user_dashboard" %}"  {% endif %}  class="collapsed" >
                       <i class="fas fa-home"></i>
                       <p>Tableau de bord</p>
                     </a>

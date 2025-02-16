@@ -32,6 +32,7 @@
               </form>
             </ul>
           </li>
+          {% if request.user.statue == 'admin' %}
           <!-- la partie notification -->
           <li class="nav-item topbar-icon dropdown hidden-caret">
             <a
@@ -88,7 +89,10 @@
               </li>
             </ul>
           </li>
+          {% endif %}
+          
           <!-- la partie profile -->
+          {% if request.user.is_authenticated%}
           <li class="nav-item topbar-user dropdown hidden-caret">
             <a
               class="dropdown-toggle profile-pic"
@@ -98,14 +102,14 @@
             >
               <div class="avatar-sm">
                 <img
-                  src="{% static 'assets/img/profile.jpg' %}"
+                  src="{{request.user.profil.url}}"
                   alt="..."
                   class="avatar-img rounded-circle"
                 />
               </div>
               <span class="profile-username">
-                <span class="op-7">(admin)</span>
-                <span class="fw-bold">Fode Dounoh</span>
+                <span class="op-7">( {{request.user.statue}} )</span>
+                <span class="fw-bold"> {{request.user.first_name}} {{request.user.last_name}} </span>
               </span>
             </a>
             <ul class="dropdown-menu dropdown-user animated fadeIn">
@@ -113,13 +117,13 @@
                 <li>
                   <div class="user-box">
                     <div class="avatar-lg">
-                      <img src="{% static 'assets/img/profile.jpg' %}"  alt="image profile" class="avatar-img rounded"/>
+                      <img src="{{request.user.profil.url}}"  alt="image profile" class="avatar-img rounded"/>
                     </div>
                     <div class="u-text">
-                      <h4>Fode Dounoh</h4>
-                      <p class="text-muted">dounoh0@gmail.com</p>
+                      <h4> {{request.user.first_name}} {{request.user.last_name}} </h4>
+                      <p class="text-muted"> {{request.user.email}} </p>
                       <a
-                        href="profile.html"
+                        href=" {% url 'account:profile' %} "
                         class="btn btn-xs btn-secondary btn-sm"
                         >Voir le Profile</a
                       >
@@ -134,11 +138,12 @@
                   <div class="dropdown-divider"></div>
                   <a class="dropdown-item" href="#">Paramettre Profile</a>
                   <div class="dropdown-divider"></div>
-                  <a class="dropdown-item" href="#">Deconnexion</a>
+                  <a class="dropdown-item" href="{% url 'account:logout' %}">Deconnexion</a>
                 </li>
               </div>
             </ul>
           </li>
+          {% endif %}
         </ul>
       </div>
     </nav>

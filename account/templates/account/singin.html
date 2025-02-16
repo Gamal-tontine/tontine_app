@@ -72,6 +72,14 @@
                 {{ error }}
             </div>
         {% endfor %}
+        
+        {% if messages%}
+        {% for message in messages %}
+            <div class="alert {% if 'success' in message.tags %} alert-success {% else %} alert-danger {% endif %}" role="alert">
+                {{message}}
+            </div>
+        {% endfor%}
+        {% endif %}
     
         <!-- Checkbox "Se souvenir de moi" -->
         <div class="d-flex justify-content-between align-items-center mb-3">

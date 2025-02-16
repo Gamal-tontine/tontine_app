@@ -7,7 +7,7 @@ from .manage import CustomeUser
 
 statue_choise = [
     ('user', 'utilisateur'),
-    ('gestionnaire', 'gestionnaire'),
+    ('admin', 'gestionnaire'),
 ]
 
 class User(AbstractUser,PermissionsMixin):

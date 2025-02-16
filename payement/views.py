@@ -4,14 +4,15 @@ from django.views import View
 from django.db import transaction
 from django.contrib import messages
 from django.core.mail import send_mail
+from .utils.send_mail_info import sender_mail_for_info
 
 from config.settings import DEFAULT_FROM_EMAIL
-from tontine.models import TontineCollective
+from tontine.models import TontineCollective, TontineIndividuelle
 from account.models import User
 from .forms import AcquitementForm
-from .models import Acquitement,Payment
+from .models import Acquitement,Payment, AcquitementIndividuelle
 
-class AcquitementView(View):
+class AcquitementCollectiveView(View):
     def post(self, request, uid_tontine, id_user):
         tontine = get_object_or_404(TontineCollective, uid=uid_tontine)
         user = get_object_or_404(User, id=id_user)
@@ -78,3 +79,62 @@ class HistoriqueView(View):
             'acquitement': acquitement
         }
         return render(request= request, temeplate_name = 'payement/historique.html', context= context)
+    
+   
+class AcquitementIndividuelleAdmin(View):
+    def post(self,request,uid):
+        tontine = get_object_or_404(TontineIndividuelle,uid = uid)
+        amount = request.POST.get('amount')
+        moyen = request.POST.get('moyen')
+        amount = int(amount)
+        if amount > tontine.objectif or (amount + tontine.balance) > tontine.objectif:
+            messages.error(request=request, message='le montant saisie est superieur a l objectif de la tontine')
+            return redirect('tontine_individuelle:datail_tontine_individuelle', tontine.uid)
+        if not amount < tontine.amount:
+            with transaction.atomic():
+                AcquitementIndividuelle.objects.create(user = tontine.user,amount = amount,moyen =moyen,tontine = tontine)
+                tontine.balance += amount
+                tontine.save()
+                sender_mail_for_info(tontine.user.email,'paiement effectuer',f'votre paiement a bien ete effectuer pour la tontine {tontine.name}')
+            messages.success(request=request, message='le paiement a bien ete effectuer')
+            return redirect('tontine_individuelle:datail_tontine_individuelle', tontine.uid)
+        else:
+            messages.error(request=request, message='le montant saisie est inferieur au montant a deposer chaque jours')
+            return redirect('tontine_individuelle:datail_tontine_individuelle', tontine.uid)
+
+
+class PayementIndividuelleView(View):
+    def post(self,request,uid):
+        tontine = get_object_or_404(TontineIndividuelle,uid=uid)
+        if not tontine.objectif  == tontine.balance:
+            messages.error(request,'vous ne pouvez pas effectuer le payement')
+            return redirect('tontine_individuelle:datail_tontine_individuelle', tontine.uid)
+        with transaction.atomic():
+            Payment.objects.create(tontine= tontine,recipient=tontine.user,amount= tontine.balence )
+            tontine.balance = 0.0
+            tontine.save()
+            sender_mail_for_info(tontine.user.email,'Payement de la tontine',f'Cher(e) {tontine.user.first_name} vous avez reçu virement de {tontine.balence - tontine.amount} GNF pour votre participation a la tontine individuelle {tontine.name}')
+        messages.success(request,'le payement a ete effectuer avec success ')
+    
+    
+class AcquitementIndividuelleUserView(View):
+    def post(self,request,uid):
+        tontine = get_object_or_404(TontineIndividuelle,uid = uid)
+        amount = request.POST.get('amount')
+        moyen = request.POST.get('moyen')
+        amount = int(amount)
+        if amount > tontine.objectif or (amount + tontine.balance) > tontine.objectif:
+            messages.error(request=request, message='le montant saisie est superieur a l objectif de la tontine')
+            return redirect('tontine_individuelle:datail_tontine_individuelle', tontine.uid)
+        if not amount < tontine.amount:
+            with transaction.atomic():
+                AcquitementIndividuelle.objects.create(user = request.user,amount = amount,moyen =moyen,tontine = tontine)
+                tontine.balance += amount
+                tontine.save()
+                sender_mail_for_info(tontine.user.email,'paiement effectuer',f'votre paiement de {amount} GNF a bien ete effectuer pour la tontine {tontine.name}')
+            messages.success(request=request, message='le paiement a bien ete effectuer')
+            return redirect('tontine_individuelle:datail_tontine_individuelle', tontine.uid)
+        else:
+            messages.error(request=request, message='le montant saisie est inferieur au montant a deposer chaque jours')
+            return redirect('tontine_individuelle:datail_tontine_individuelle', tontine.uid)
+
