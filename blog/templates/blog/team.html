@@ -1,0 +1,66 @@
+{% extends "blog/base.html" %}
+{% load static %}
+{% block content %}
+{% include "blog/nave.html" %}
+<!-- team section start -->
+<div class="team_section layout_padding">
+  <div class="container">
+    <h1 class="what_taital">Notre Équipe et Experts</h1>
+    <p class="what_text_1">Notre équipe de professionnels est dédiée à vous aider à atteindre vos objectifs financiers grâce à une gestion transparente et sécurisée de vos tontines.</p>
+    <div class="team_section_2 layout_padding">
+      <div class="row">
+        <div class="col-sm-3">
+          <img src="{% static 'blog/images/img-7.png' %}" class="image_7">
+          <p class="readable_text">Jean Dupont</p>
+          <p class="readable_text_1">Expert en Tontines Collectives</p>
+          <div class="social_icon">
+            <ul>
+              <li><a href="#"><img src="{% static 'blog/images/fb-icon.png' %}"></a></li>
+              <li><a href="#"><img src="{% static 'blog/images/twitter-icon.png' %}"></a></li>
+              <li><a href="#"><img src="{% static 'blog/images/linkedin-icon.png' %}"></a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-sm-3">
+          <img src="{% static 'blog/images/img-8.png' %}" class="image_7">
+          <p class="readable_text">Marie Leclerc</p>
+          <p class="readable_text_1">Conseillère Tontine Individuelle</p>
+          <div class="social_icon">
+            <ul>
+              <li><a href="#"><img src="{% static 'blog/images/fb-icon.png' %}"></a></li>
+              <li><a href="#"><img src="{% static 'blog/images/twitter-icon.png' %}"></a></li>
+              <li><a href="#"><img src="{% static 'blog/images/linkedin-icon.png' %}"></a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-sm-3">
+          <img src="{% static 'blog/images/img-9.png' %}" class="image_7">
+          <p class="readable_text">David Toure</p>
+          <p class="readable_text_1">Gestionnaire de Comptes</p>
+          <div class="social_icon">
+            <ul>
+              <li><a href="#"><img src="{% static 'blog/images/fb-icon.png' %}"></a></li>
+              <li><a href="#"><img src="{% static 'blog/images/twitter-icon.png' %}"></a></li>
+              <li><a href="#"><img src="{% static 'blog/images/linkedin-icon.png' %}"></a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-sm-3">
+          <img src="{% static 'blog/images/img-10.png' %}" class="image_7">
+          <p class="readable_text">Amina Diallo</p>
+          <p class="readable_text_1">Conseillère Financière</p>
+          <div class="social_icon">
+            <ul>
+              <li><a href="#"><img src="{% static 'blog/images/fb-icon.png' %}"></a></li>
+              <li><a href="#"><img src="{% static 'blog/images/twitter-icon.png' %}"></a></li>
+              <li><a href="#"><img src="{% static 'blog/images/linkedin-icon.png' %}"></a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- team section end -->
+{% include "blog/footer.html" %}
+{% endblock %}

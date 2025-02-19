@@ -1,0 +1,118 @@
+{% extends "account/base.html" %}
+{% load static %}
+{% block title %} {% endblock %}
+
+{%block content%}
+    <style>
+        body {
+            background: #f5f5f5 url('https://via.placeholder.com/1920x1080') no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .register-form {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            width: 100%;
+            max-width: 500px;
+            height: 100%;
+            overflow: scroll;
+        }
+        .form-control:focus {
+            box-shadow: none;
+        }
+        .btn-primary {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+    </style>
+<div class="register-form">
+    <div class="text-center mb-4">
+        <img src="{% static 'assets/img/logo_tontine.webp' %}" style="width:100%; height:100px;" alt="Logo" class="mb-3">
+        <h4 class="fw-bold">INSCRIPTION</h4>
+        <p>Déjà inscrit ? <a href=" {% url 'account:singin' %} ">Connectez-vous</a></p>
+    </div>
+    {% if form.errors or form.non_field_errors or messages %}
+        {% for error in form.errors %}
+        <div class="alert alert-danger" role="alert">
+            le champ {{ error }} non valide
+        </div>
+        {% endfor %}
+        {% for error_non_lie in non_field_errors %}
+        <div class="alert alert-danger" role="alert">
+            {{error_non_lie}}
+        </div>
+        {% endfor %}
+
+        {% for message in messages %}
+            <div class="alert {% if 'success' in message.tags %} alert-success {%else%} alert-danger {% endif%}"  role="alert">
+                {{error_non_lie}}
+            </div>
+        {% endfor%}
+    {% endif %}
+    <form enctype="multipart/form-data" method="POST">
+        {% csrf_token %}
+        <!-- Prénom -->
+        <div class="mb-3">
+            <label for="{{form.first_name.id_for_label}}" class="form-label">{{form.first_name.label}} </label>
+            {{form.first_name}}
+        </div>
+        
+        <!-- Nom -->
+        <div class="mb-3">
+            <label for="{{form.last_name.id_for_label}}" class="form-label">{{form.last_name.label}}</label>
+            {{form.last_name}}
+        </div>
+        
+        <!-- Email -->
+        <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            {{form.email}}
+        </div>
+        
+        <!-- Numéro de téléphone -->
+        <div class="mb-3">
+            <label for="phone" class="form-label">Numéro de téléphone</label>
+            {{form.phone_number}}
+        </div>
+        
+        <!-- Profil (photo) -->
+        <div class="mb-3">
+            <label for="{{form.profil.id_for_label}}" class="form-label">Photo de profil</label>
+            {{form.profil}}
+        </div>
+        
+        <!-- Statut -->
+        <div class="mb-3">
+            <label for="{{form.statue.id_for_label}}" class="form-label"> {{form.statue.label}} </label>
+                {{form.statue}}
+            </select>
+        </div>
+        
+        <!-- Mot de passe -->
+        <div class="mb-3">
+            <label for="{{form.password1.id_for_label}}" class="form-label">{{form.password1.label}}</label>
+            {{form.password1}}
+        </div>
+        
+        <!-- Confirmation de mot de passe -->
+        <div class="mb-3">
+            <label for="{{form.password2.id_for_label}}" class="form-label">{{form.password2.label}}</label>
+            {{form.password2}}
+        </div>
+        
+        <!-- Bouton de soumission -->
+        <button type="submit" class="btn btn-primary w-100">
+            <i class="bi bi-person-plus"></i> S'inscrire
+        </button>
+    </form>
+</div>
+
+{% endblock %}

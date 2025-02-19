@@ -1,0 +1,57 @@
+{% extends "admin_tontine/base.html" %}
+{% block content %}
+<div class="container d-flex justify-content-center">
+    <div class="col-md-6 mt-5">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title text-center">Adesion a la tontine  {{tontine.name}}</h4>
+            </div>
+            <div class="card-body">
+                <h3 class="text-center">Etes vous sur de bien vouloir rejoindre cette tontine ?</h3>
+                <form action="{% url 'tontine:joined_tontine' tontine.uid %}" method="post">
+                    {% csrf_token%}
+                    <div class="control d-flex justify-content-center">
+                        <button type="submit" class="btn btn-outline-success m-2">rejoindre</button>
+                        <a href="{% url 'admin_tontine:dashboard' %} " class="btn btn-outline-danger m-2">Annuler</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+        <!-- Toast -->
+            {% if messages %}
+              {% for message in messages %}
+                <div id="liveToast{{ forloop.counter }}" class="toast align-items-center text-bg-dark border-0" role="alert" aria-live="assertive" aria-atomic="true" style="position: fixed; bottom: 10px; right: 10px; z-index: 1050;">
+                  <div class="toast-header">
+                   <i class="fa-regular fa-bell me-2"></i>
+                    <strong class="me-auto">Notifications</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Fermer"></button>
+                  </div>
+                  <div class="toast-body {% if 'success' in message.tags %} text-success {% else %} text-danger {% endif %}">
+                    {{ message }}
+                  </div>
+                </div>
+              {% endfor %}
+            {% endif %}
+
+
+
+        <script>
+          // Affichage automatique des toasts au chargement
+          window.addEventListener('load', () => {
+            {% for message in messages %}
+              const toastLiveExample = document.getElementById('liveToast{{ forloop.counter }}');
+              if (toastLiveExample) {
+                const toastBootstrap = new bootstrap.Toast(toastLiveExample, { delay: 5000 });
+                toastBootstrap.show();
+              }
+            {% endfor %}
+          });
+        </script>
+
+
+
+</div>
+
+{% endblock  %}

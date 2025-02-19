@@ -1,0 +1,262 @@
+{% extends "blog/base.html" %}
+{% load static %}
+{% block content %}
+  <!--section d'en-tête début-->
+  <div class="header_section">
+    <div class="header_left">
+      <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="logo"><a href="index.html"><img src="{% static 'blog/images/logo.png' %}"></a></div>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+              <a class="nav-link" href=" {% url 'blog:index' %} ">Accueil</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href=" {% url 'blog:about' %} ">À propos</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href=" {% url 'blog:services' %} ">Nos Services</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href=" {% url 'blog:team' %} ">Équipe</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href=" {% url 'blog:contact' %}">Contact</a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+      <div class="banner_main">
+        <h1 class="banner_taital">Plateforme de Tontine <br> Collective et Individuelle</h1>
+        <p class="banner_text">Rejoignez notre plateforme et gérez facilement vos tontines collectives et individuelles. Un moyen sûr, rapide et transparent pour atteindre vos objectifs financiers.</p>
+        <div class="btn_main">
+          <div class="more_bt"><a href="{% url 'account:singin' %}">Se connecter</a></div>
+          <div class="contact_bt"><a href="{% url 'account:singup' %}">S'inscrire</a></div>
+        </div>
+      </div>
+    </div>
+    <div class="header_right">
+      <img src="{% static 'blog/images/banner-img.png' %}" class="banner_img">
+    </div>
+  </div>
+  <!--section d'en-tête fin-->
+  
+  <!--section à propos début-->
+  <div class="services_section layout_padding">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-8">
+          <h1 class="services_taital">Bienvenue sur notre plateforme de Tontine</h1>
+          <p class="services_text">Notre plateforme permet la gestion simplifiée de vos tontines collectives et individuelles, offrant ainsi à chaque membre un moyen sûr d'économiser et de gérer son argent, tout en garantissant la transparence et la sécurité des transactions.</p>
+          <div class="moremore_bt"><a href="#">En savoir plus</a></div>
+        </div>
+        <div class="col-md-4">
+          <div><img src="{% static 'blog/images/img-1.png' %}" class="image_1"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--section à propos fin-->
+  
+  <!--section des services début-->
+  <div class="what_we_do_section layout_padding">
+    <div class="container">
+      <h1 class="what_taital">Nos Services de Tontine</h1>
+      <p class="what_text">Nous proposons des services pour la gestion des tontines collectives et individuelles. Que vous soyez un membre ou un administrateur, notre plateforme facilite tout le processus.</p>
+      <div class="what_we_do_section_2">
+        <div class="row">
+        <div class="col-lg-3 col-sm-6">
+          <div class="box_main">
+            <div class="icon_1"><img src="{% static 'blog/images/icon-1.png' %}"></div>
+            <h3 class="accounting_text">Tontine Collective</h3>
+            <p class="lorem_text">Formez des groupes de personnes pour contribuer et partager les gains à la fin d'une période définie. Une gestion simplifiée pour les membres et les responsables.</p>
+            <div class="moremore_bt_1"><a href="#">Lire la suite</a></div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-sm-6">
+          <div class="box_main active">
+            <div class="icon_1"><img src="{% static 'blog/images/icon-2.png' %}"></div>
+            <h3 class="accounting_text">Tontine Individuelle</h3>
+            <p class="lorem_text">Mettez en place une tontine personnelle pour économiser à votre rythme. Idéal pour une gestion autonome de votre épargne.</p>
+            <div class="moremore_bt_1"><a href="#">Lire la suite</a></div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-sm-6">
+          <div class="box_main">
+            <div class="icon_1"><img src="{% static 'blog/images/icon-3.png' %}"></div>
+            <h3 class="accounting_text">Suivi et Gestion en Temps Réel</h3>
+            <p class="lorem_text">Suivez en temps réel les contributions, les remboursements et les soldes de votre tontine. Une plateforme transparente et facile à utiliser.</p>
+            <div class="moremore_bt_1"><a href="#">Lire la suite</a></div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-sm-6">
+          <div class="box_main">
+            <div class="icon_1"><img src="{% static 'blog/images/icon-4.png' %}"></div>
+            <h3 class="accounting_text">Sécurité Maximale</h3>
+            <p class="lorem_text">Tous vos fonds sont sécurisés grâce à notre plateforme cryptée. Vous avez l'assurance que vos transactions sont sûres.</p>
+            <div class="moremore_bt_1"><a href="#">Lire la suite</a></div>
+          </div>
+        </div>
+      </div>
+      </div>
+    </div>
+  </div>
+  <!--section des services fin-->
+  
+  <!--section des projets début-->
+  <div class="project_section layout_padding">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="project_main">
+            <h1 class="services_taital">Nos Réalisations</h1>
+            <p class="services_text">Grâce à notre plateforme, des milliers d'utilisateurs ont déjà réussi à atteindre leurs objectifs financiers grâce à des tontines bien gérées. Découvrez leurs témoignages et projets réalisés.</p>
+            <div class="moremore_bt"><a href="#">Voir les projets</a></div>
+            <div class="image_6"><img src="{% static 'blog/images/img-6.png' %}"></div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="images_main">
+            <div class="images_left">
+              <div class="container_1">
+                <img src="{% static 'blog/images/img-2.png' %}" alt="Avatar" class="image" style="width:100%">
+                <div class="middle">
+                  <div class="text"><img src=" {% static 'blog/images/search-icon.png' %}"></div>
+                  <h2 class="fact_text">Tontine Collective</h2>
+                </div>
+              </div>
+              <div class="container_1">
+                <img src="{% static 'blog/images/img-3.png' %}" alt="Avatar" class="image" style="width:100%">
+                <div class="middle">
+                  <div class="text"><img src="{% static 'blog/images/search-icon.png' %}"></div>
+                  <h2 class="fact_text">Tontine Individuelle</h2>
+                </div>
+              </div>
+            </div>
+            <div class="images_right">
+              <div class="container_1">
+                <img src="{% static 'blog/images/img-4.png' %}" alt="Avatar" class="image" style="width:100%">
+                <div class="middle">
+                  <div class="text"><img src="{% static 'blog/images/search-icon.png' %}"></div>
+                  <h2 class="fact_text">Projets Réalisés</h2>
+                </div>
+              </div>
+              <div class="container_1">
+                <img src="{% static 'blog/images/img-5.png' %}" alt="Avatar" class="image" style="width:100%">
+                <div class="middle">
+                  <div class="text"><img src="{% static 'blog/images/search-icon.png' %}"></div>
+                  <h2 class="fact_text">Gestion en Temps Réel</h2>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="project_section_2 layout_padding">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-3 col-sm-6">
+          <div class="icon_1"><img src="{% static 'blog/images/icon-3.png' %}"></div>
+          <h3 class="accounting_text_1">5,000+</h3>
+          <p class="yers_text">Utilisateurs actifs</p>
+        </div>
+        <div class="col-lg-3 col-sm-6">
+          <div class="icon_1"><img src="{% static 'blog/images/icon-4.png' %}"></div>
+          <h3 class="accounting_text_1">15,000+</h3>
+          <p class="yers_text">Projets de tontine gérés</p>
+        </div>
+        <div class="col-lg-3 col-sm-6">
+          <div class="icon_1"><img src="{% static 'blog/images/icon-2.png' %}"></div>
+          <h3 class="accounting_text_1">98%</h3>
+          <p class="yers_text">Satisfaction des utilisateurs</p>
+        </div>
+        <div class="col-lg-3 col-sm-6">
+          <div class="icon_1"><img src="{% static 'blog/images/icon-1.png' %}"></div>
+          <h3 class="accounting_text_1">100+</h3>
+          <p class="yers_text">Groupes de tontine</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--section des projets fin-->
+  
+  <!--section de l'équipe début-->
+  <div class="team_section layout_padding">
+    <div class="container">
+      <h1 class="what_taital">Notre Équipe d'Experts</h1>
+      <p class="what_text">Notre équipe est composée de professionnels expérimentés dans la gestion des tontines et la finance. Nous vous offrons une plateforme sécurisée et conviviale.</p>
+      <div class="team_section_2">
+        <div class="row">
+          <div class="col-lg-3 col-sm-6">
+            <div class="team_main">
+              <img src="{% static 'blog/images/team-1.png' %}" class="team_image">
+              <h4 class="team_name">Jean Dupont</h4>
+              <p class="team_position">Expert en Tontine</p>
+              <div class="team_icon">
+                <ul>
+                  <li><a href="#"><img src="{% static 'blog/images/fb-icon.png' %}"></a></li>
+                  <li><a href="#"><img src="{% static 'blog/images/twitter-icon.png' %}"></a></li>
+                  <li><a href="#"><img src="{% static 'blog/images/linkedin-icon.png' %}"></a></li>
+                  <li><a href="#"><img src="{% static 'blog/images/google-icon.png' %}"></a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-3 col-sm-6">
+            <div class="team_main">
+              <img src="{% static 'blog/images/team-2.png' %}" class="team_image">
+              <h4 class="team_name">Marie Lemoine</h4>
+              <p class="team_position">Consultante Financière</p>
+              <div class="team_icon">
+                <ul>
+                  <li><a href="#"><img src="{% static 'blog/images/fb-icon.png' %}"></a></li>
+                  <li><a href="#"><img src="{% static 'blog/images/twitter-icon.png' %}"></a></li>
+                  <li><a href="#"><img src="{% static 'blog/images/linkedin-icon.png' %}"></a></li>
+                  <li><a href="#"><img src="{% static 'blog/images/google-icon.png' %}"></a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-3 col-sm-6">
+            <div class="team_main">
+              <img src="{% static 'blog/images/team-3.png' %}" class="team_image">
+              <h4 class="team_name">Paul Tardy</h4>
+              <p class="team_position">Gestionnaire de Tontine</p>
+              <div class="team_icon">
+                <ul>
+                  <li><a href="#"><img src="{% static 'blog/images/fb-icon.png' %}"></a></li>
+                  <li><a href="#"><img src="{% static 'blog/images/twitter-icon.png' %}"></a></li>
+                  <li><a href="#"><img src="{% static 'blog/images/linkedin-icon.png' %}"></a></li>
+                  <li><a href="#"><img src="{% static 'blog/images/google-icon.png' %}"></a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-3 col-sm-6">
+            <div class="team_main">
+              <img src="{% static 'blog/images/team-4.png' %}" class="team_image">
+              <h4 class="team_name">Sophie Delmas</h4>
+              <p class="team_position">Responsable Sécurité</p>
+              <div class="team_icon">
+                <ul>
+                  <li><a href="#"><img src="{% static 'blog/images/fb-icon.png' %}"></a></li>
+                  <li><a href="#"><img src="{% static 'blog/images/twitter-icon.png' %}"></a></li>
+                  <li><a href="#"><img src="{% static 'blog/images/linkedin-icon.png' %}"></a></li>
+                  <li><a href="#"><img src="{% static 'blog/images/google-icon.png' %}"></a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--section de l'équipe fin-->
+  {% include "blog/footer.html" %}
+
+{% endblock %}

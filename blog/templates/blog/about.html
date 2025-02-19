@@ -1,0 +1,24 @@
+{% extends "blog/base.html" %}
+{% load static %}
+{% block content %}
+{% include "blog/nave.html" %}
+
+<!-- about section start -->
+<div class="services_section layout_padding">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8">
+        <h1 class="services_taital">BIENVENUE SUR NOTRE PLATEFORME DE TONTINE</h1>
+        <p class="services_text">La tontine est un système d'épargne mutualisée qui permet à ses membres de se soutenir financièrement à travers des contributions mensuelles. Grâce à notre plateforme, nous facilitons la gestion de votre tontine, qu'elle soit collective ou individuelle, et vous offrons un suivi en temps réel pour garantir la sécurité et la transparence de vos investissements.</p>
+        <div class="moremore_bt"><a href="#">En savoir plus</a></div>
+      </div>
+      <div class="col-md-4">
+        <div><img src="{% static 'blog/images/img-1.png' %}" class="image_1"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- about section end -->
+
+{% include "blog/footer.html" %}
+{% endblock %}

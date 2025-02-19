@@ -1,0 +1,50 @@
+{% extends "blog/base.html" %}
+{% load static %}
+{% block content %}
+{% include "blog/nave.html" %}
+<!-- services section start -->
+<div class="what_we_do_section layout_padding">
+  <div class="container">
+    <h1 class="what_taital">NOS SERVICES</h1>
+    <p class="what_text">Notre plateforme propose des services adaptés pour la gestion de vos tontines collectives et individuelles, en vous offrant transparence et sécurité.</p>
+    <div class="what_we_do_section_2">
+      <div class="row">
+        <div class="col-lg-3 col-sm-6">
+          <div class="box_main">
+            <div class="icon_1"><img src="{% static 'blog/images/icon-1.png' %}"></div>
+            <h3 class="accounting_text">Tontines Collectives</h3>
+            <p class="lorem_text">Nous facilitons la gestion de tontines collectives pour permettre à chaque participant d'atteindre ses objectifs financiers ensemble.</p>
+            <div class="moremore_bt_1"><a href="#">En savoir plus </a></div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-sm-6">
+          <div class="box_main active">
+            <div class="icon_1"><img src="{% static 'blog/images/icon-2.png' %}"></div>
+            <h3 class="accounting_text">Tontines Individuelles</h3>
+            <p class="lorem_text">Nos tontines individuelles vous permettent de gérer vos économies en toute sécurité avec des plans flexibles.</p>
+            <div class="moremore_bt_1"><a href="#">En savoir plus </a></div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-sm-6">
+          <div class="box_main">
+            <div class="icon_1"><img src="{% static 'blog/images/icon-3.png' %}"></div>
+            <h3 class="accounting_text">Gestion de Comptes</h3>
+            <p class="lorem_text">Suivez vos cotisations, bénéficiaires et gains de manière simple et transparente.</p>
+            <div class="moremore_bt_1"><a href="#">En savoir plus </a></div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-sm-6">
+          <div class="box_main">
+            <div class="icon_1"><img src="{% static 'blog/images/icon-4.png' %}"></div>
+            <h3 class="accounting_text">Conseils Financiers</h3>
+            <p class="lorem_text">Recevez des conseils personnalisés pour optimiser vos économies et investissements dans le cadre de vos tontines.</p>
+            <div class="moremore_bt_1"><a href="#">En savoir plus </a></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- services section end -->
+{% include "blog/footer.html" %}
+{% endblock %}

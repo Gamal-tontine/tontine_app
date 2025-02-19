@@ -1,0 +1,361 @@
+{% extends "admin_tontine/base.html" %}
+{% block content %}
+<div class="wrapper">
+  {% include "admin_tontine/seidebar.html" %}
+  <div class="main-panel">
+      {% include "admin_tontine/navbar.html" %}
+
+      <div class="container">
+        <div class="page-inner">
+          <div class="page-header">
+            <h3 class="fw-bold mb-3">Detail Tontine</h3>
+            <ul class="breadcrumbs mb-3">
+              <li class="nav-home">
+                <a href=" {% url 'admin_tontine:dashboard' %} ">
+                  <i class="icon-home"></i>
+                </a>
+              </li>
+              <li class="separator">
+                <i class="icon-arrow-right"></i>
+              </li>
+              <li class="nav-item">
+                <a href="#">Tontine</a>
+              </li>
+              <li class="separator">
+                <i class="icon-arrow-right"></i>
+              </li>
+              <li class="nav-item">
+                <a href="#">Detail</a>
+              </li>
+            </ul>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="card">
+                <div class="card-header">
+                  <!-- le contenue  -->
+                  <div class="container d-flex">
+                    <!-- le contenue de la gauche sur le titre -->
+                    <div class="left-content">
+                      <div class="card-title">
+                        {{tontine.name}} | <span class="text-danger ">Montant: {{tontine.amount}} GNF</span> 
+                        <p> <i class='mx-3'>Creer le : {{tontine.create_at |date:"D d M Y"}}</i> 
+                          || <i class='mx-3'>La date de fin : {{tontine.end_date}} </i> 
+                        </p>
+                      </div>
+                      <div class="card-category">{{tontine.description}} </div>
+                    </div>
+                    <!-- le contenu de la droite sur les details -->
+                    <div class="right-content " style="margin-left: auto;">
+
+                     <!--  le bouton pour le payement -->
+                      <i class="fa fa-money-bill-wave" data-bs-toggle="modal" data-bs-target="#payementModal" style="color: rgb(26, 97, 251); max-width: 50px; margin-right: 10px;"></i>
+                     
+                      <!-- Début du modal pour le paiement -->
+                      <div class="modal fade" id="payementModal" tabindex="-1" aria-labelledby="payementModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h1 class="modal-title fs-5" id="payementModalLabel">Paiement des frais de la tontine</h1>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <form action="{% url 'payement:acquitement_tontine_individuelle_admin' tontine.uid %}" method="post">
+                              {% csrf_token %}
+                              <div class="modal-body">
+                                {{ acquitementform.as_p }}
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                <button type="submit" class="btn btn-primary">Effectuer</button>
+                              </div>
+                            </form>
+                          </div>
+                        </div>
+                      </div>
+                      <!-- Fin du modal -->
+                                    
+
+
+                      <!-- la modification de la tontine -->
+                      {% if not is_full %}
+                       <a href="{% url 'tontine_individuelle:update_tontine_individuelle' tontine.uid %}">
+                          <i class="fa fa-edit" style="color: rgb(26, 97, 251); max-width: 50px; margin-right: 10px;"></i>
+                       </a>
+                       {% endif %}
+                      <!-- supprimer la tontine -->
+                        <i class="fas fa-trash "  data-bs-toggle="modal" data-bs-target="#deleteModal" style="color: red; max-width: 50px; margin-right: 10px;"> </i>
+
+                        <!-- Début du modal pour la suppression -->
+                        <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                          <div class="modal-dialog">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="deleteModalLabel">Suppression</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                              </div>
+                              <form method="post" action="{% url 'tontine_individuelle:delete_tontine_individuelle' tontine.uid %}">
+                                {% csrf_token %}
+                                <div class="modal-body">
+                                  Etes vous sûr de bien vouloir supprimer cette tontine?
+                                  La suppression de cette tontine engendrera egalement la perte de toutes les infos lier a cette tontine
+                                </div>
+                                <div class="modal-footer">
+                                  <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Annuler</button>
+                                  <button type="submit" class="btn btn-danger">Supprimer</button>
+                                </div>
+                              </form>
+                            </div>
+                          </div>
+                        </div>
+                        <!-- Fin du modal pour la suppression -->
+                    </div>
+                  </div>
+
+                  <!-- detail sur la tontine  -->
+                  <div class="row row-card-no-pd">
+                    <div class="col-12 col-sm-6 col-md-6 col-xl-3">
+                      <div class="card">
+                        <div class="card-body">
+                          <div class="d-flex justify-content-between">
+                            <div>
+                              <h6><b>Solde </b></h6>
+                              <p class="text-muted">Actuel </p>
+                            </div>
+                            <h5 class="text-info fw-bold"> {{tontine.balance}} GNF</h5>
+                          </div>
+                          <div class="progress progress-sm">
+                            <div
+                              class="progress-bar bg-info w-100"
+                              role="progressbar"
+                              aria-valuenow="100"
+                              aria-valuemin="0"
+                              aria-valuemax="100"
+                            ></div>
+                          </div>
+                          <div class="d-flex justify-content-between mt-2">
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-6 col-xl-3">
+                      <div class="card">
+                        <div class="card-body">
+                          <div class="d-flex justify-content-between">
+                            <div>
+                              <h6><b>Objectif </b></h6>
+                              <p class="text-muted">mois</p>
+                            </div>
+                            <h5 class="text-success fw-bold"> {{tontine.objectif}} GNF</h5>
+                          </div>
+                          <div class="progress progress-sm">
+                            <div
+                              class="progress-bar bg-success w-100"
+                              role="progressbar"
+                              aria-valuenow="100"
+                              aria-valuemin="0"
+                              aria-valuemax="100"
+                            ></div>
+                          </div>
+                          <div class="d-flex justify-content-between mt-2">
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-6 col-xl-3">
+                      <div class="card">
+                        <div class="card-body">
+                          <div class="d-flex justify-content-between">
+                            <div>
+                              <h6><b>jours </b></h6>
+                              <p class="text-muted">Nombre de jours</p>
+                            </div>
+                            <h5 class="text-danger fw-bold"> {{tontine.nbr_days}} / 30</h5>
+                          </div>
+                          <div class="progress progress-sm">
+                            <div
+                              class="progress-bar bg-danger w-100"
+                              role="progressbar"
+                              aria-valuenow="100"
+                              aria-valuemin="0"
+                              aria-valuemax="100"
+                            ></div>
+                          </div>
+                          <div class="d-flex justify-content-between mt-2">
+                            <p class="text-muted mb-0"></p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-6 col-xl-3">
+                      <div class="card">
+                        <div class="card-body">
+                          <div class="d-flex justify-content-between">
+                            <div>
+                              <h6><b>Fin</b></h6>
+                              <p class="text-muted"> 👍</p>
+                            </div>
+                            <h5 class="text-secondary fw-bold"> {{ tontine.end_date }} </h5>
+                          </div>
+                          <div class="progress progress-sm">
+                            <div
+                              class="progress-bar bg-secondary w-100"
+                              role="progressbar"
+                              aria-valuenow="100"
+                              aria-valuemin="0"
+                              aria-valuemax="100"
+                            ></div>
+                          </div>
+                          <div class="d-flex justify-content-between mt-2">
+                            <p class="text-muted mb-0"> </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div> 
+                  
+                  <!-- la partie pour le paiement du la tontine -->
+                  {% if  tontine.objectif == tontine.balance %}
+                  <div class='row d-flex justify-content-center'>
+                    <div class="col-sm-6 col-md-4">
+                      <div class="card card-stats card-info card-round">
+                        <div class="card-body">
+                          <div class="row">
+                            <div class="col-5">
+                              <div class="icon-big text-center">
+                                <i class="fa fa-money-bill-wave"></i>
+                              </div>
+                            </div>
+                            <div class="col-7 col-stats">
+                              <div class="numbers">
+                                <h4 class="card-title">  </h4>
+                                <a href="{% url 'payement:payement_tontine_individuelle' tontine.uid %}" class="bg-warning-gradient" style="padding: 6px; border-radius: 12pxy;">
+                                  <i class="fas fa-money-check-alt"></i>
+                                  Payer
+                                </a>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- la fin de la partie pour le paiement -->
+                  {% endif %}
+
+                  <!-- fin des details sur la tontine -->
+
+                </div>
+
+
+                <div class="card-body">
+                  <!-- le debut de la table -->
+                  <div class="col-md-12">
+                    <div class="card">
+                      <div class="card-header">
+                        <div class="d-flex align-items-center">
+                          <h4 class="card-title">Historique des paiements</h4>
+                        </div>
+                      </div>
+                      <div class="card-body">
+    
+                        <!-- la liste de tous les membres de la tontine -->
+                        <div class="table-responsive">
+                          <table
+                            id="add-row"
+                            class="display table table-striped table-hover"
+                          >
+                            <thead>
+                              <tr>
+                                <th>Montant</th>
+                                <th>Date & heure </th>
+                                <th>Moyen de Paiement</th>
+                                <th style="width: 10%">Reçu</th>
+                              </tr>
+                            </thead>
+                            <tfoot>
+                              <tr>
+                                <th>Montant</th>
+                                <th>Date & heure </th>
+                                <th>Moyen de paiement</th>
+                                <th>Reçu</th>
+                              </tr>
+                            </tfoot>
+                            <tbody>
+                              {% for acquitement in acquitements %}
+                              <tr>
+                                <td class="text-danger"> {{acquitement.amount}} GNF</td>
+                                <td > {{acquitement.date}} </td>
+                                <td> {{acquitement.moyen}} </td>
+                                <td>
+                                  <div class="form-button-action">
+                                    <i class="fa fa-check"></i>
+                                  </div>
+                                </td>
+                              </tr>
+                              {% empty %}
+                              <p> Pas d'historique de paiement disponible </p>
+                              {% endfor %}
+                              
+                            </tbody>
+                          </table>
+                        </div>
+                        <!-- fin de la liste de tout les membres de la tontine -->
+
+                      </div>
+                    </div>
+                  </div>
+                <!-- la fin de la table -->
+                </div>
+
+
+                <div class="card-footer">
+                  <hr />
+                  Dounoh Tontine
+                </div>
+
+              </div>
+              <!-- la fin du cadre container total -->
+            </div>
+          </div>
+        </div>
+      </div>
+    
+
+   <!-- la fin du message toast -->
+        
+       <!-- Toast -->
+            {% if messages %}
+              {% for message in messages %}
+                <div id="liveToast{{ forloop.counter }}" class="toast align-items-center text-bg-dark border-0" role="alert" aria-live="assertive" aria-atomic="true" style="position: fixed; bottom: 10px; right: 10px; z-index: 1050;">
+                  <div class="toast-header">
+                   <i class="fa-regular fa-bell me-2"></i>
+                    <strong class="me-auto">Notifications</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Fermer"></button>
+                  </div>
+                  <div class="toast-body {% if 'success' in message.tags %} text-success {% else %} text-danger {% endif %}">
+                    {{ message }}
+                  </div>
+                </div>
+              {% endfor %}
+            {% endif %}
+
+        <script>
+          // Affichage automatique des toasts au chargement
+          window.addEventListener('load', () => {
+            {% for message in messages %}
+              const toastLiveExample = document.getElementById('liveToast{{ forloop.counter }}');
+              if (toastLiveExample) {
+                const toastBootstrap = new bootstrap.Toast(toastLiveExample, { delay: 5000 });
+                toastBootstrap.show();
+              }
+            {% endfor %}
+          });
+        </script>
+
+
+
+  </div>
+</div>
+
+{% endblock  %}
+
