@@ -3,8 +3,10 @@ import calendar
 from django.db import models
 from django.db.models import Count, Sum, OuterRef, Exists
 from django.utils.timezone import localdate, timedelta
+from django.utils import timezone
 from datetime import datetime, date
-from payement.models import Acquitement
+from payement.models import Acquitement, Payment
+from random import randint
 
 FREQUENCY_CHOICES = [
     ('jour', 'Chaque jour'),
@@ -26,10 +28,12 @@ class TontineCollective(models.Model):
     frequence = models.CharField(choices=FREQUENCY_CHOICES, default='jour', max_length=12)
     order_paiemement = models.IntegerField(choices=PAYMENT_ORDER_CHOICES, default=1)
     create_at = models.DateField(auto_now_add=True)
+    start_at = models.DateField(null=True, blank=True)
     admin = models.ForeignKey('account.User', on_delete=models.PROTECT, related_name='admin_tontine_collective')
     members = models.ManyToManyField('account.User', related_name='member_tontines_collective')
     qr_code = models.ImageField(upload_to='tontine_qrcode/', blank=True, null=True)
     periode_amount = models.IntegerField(default=0)
+    recipient_tontine_id = models.IntegerField(default=0)
 
     def __str__(self):
         return self.name
@@ -44,6 +48,69 @@ class TontineCollective(models.Model):
     @property
     def is_full(self):
         return self.members.count() >= self.limite_member
+    
+    def start_tontine(self):
+        if self.total_members == self.limite_member:
+            self.start_at = timezone.now()
+        
+    def end_date_tontine(self):
+        if self.start_tontine:
+            month = self.start_at.day + timedelta(days=29)
+            return month * self.total_members
+        else:
+            return None
+        
+    def recipient(self):
+        """Retourne le prochain membre qui recevra l'argent."""
+        if self.order_paiemement == 1:
+            members = list(self.members.all())
+            random = randint(0, len(members) - 1)
+            while Payment.objects.filter(recipient=members[random]).exists():
+                random = randint(0, len(members) - 1)
+            self.recipient_tontine_id = members[random].pk
+        else:
+            members = list(self.members.all().order_by('id'))
+            for member in members:
+                if not Payment.objects.filter(recipient=member).exists():
+                    self.recipient_tontine_id = member.pk
+                    break
+    
+    @property
+    def unpaid_members(self):
+        """Retourne les membres qui n'ont pas encore payé et combien ils doivent payer."""
+        unpaid_members = []
+        for member in self.members.all():
+            last_payment = Payment.objects.filter(tontine=self, recipient=member).order_by('-date').first()
+            if not last_payment or not last_payment.is_paid:
+                unpaid_members.append({
+                    "user": member,
+                    "amount_due": self.amount,
+                    "days_overdue": (timezone.now().date() - (last_payment.date if last_payment else self.start_at)).days,
+                })
+        return unpaid_members
+
+    @property
+    def blocked_members(self):
+        """Retourne les membres qui sont bloqués à cause de paiement en retard de plus de 2 jours."""
+        blocked = []
+        for member in self.unpaid_members:
+            if member['days_overdue'] > 2:
+                blocked.append(member['user'])
+        return blocked
+
+    @property
+    def paid_members(self):
+        """Retourne la liste des membres ayant payé et combien ils ont payé."""
+        paid_members = []
+        for member in self.members.all():
+            payments = Payment.objects.filter(tontine=self, recipient=member, is_paid=True)
+            total_paid = sum(payment.amount for payment in payments)
+            if total_paid > 0:
+                paid_members.append({
+                    "user": member,
+                    "total_paid": total_paid
+                })
+        return paid_members
 
     @property
     def mois_actuel(self):
@@ -192,18 +259,3 @@ class TontineCollective(models.Model):
 
     def total_tontines_count(self):
         return self.member_tontines_collective.count()
-
-
-class TontineIndividuelle(models.Model):
-    uid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-    name = models.CharField(max_length=50)
-    description = models.TextField()
-    amount = models.BigIntegerField()
-    create_at = models.DateField(auto_now_add=True)
-    admin = models.ForeignKey('account.User', on_delete=models.PROTECT, related_name='admin_tontine_individuelle')
-    members = models.ForeignKey("account.User", verbose_name="", related_name='memeber_tontine_individuelle' , on_delete=models.CASCADE)
-
-    def __str__(self):
-        return self.name
-
-
