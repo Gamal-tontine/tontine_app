@@ -39,8 +39,9 @@
                     <div class="left-content">
                       <div class="card-title">
                         {{tontine.name}} | <span class="text-danger ">Montant: {{tontine.amount}} GNF</span> 
-                        <p> <i class='mx-3'>Creer le : {{tontine.create_at |date:"D d M Y"}}</i> 
-                          || <i class='mx-3'>La date de fin : {{tontine.end_date}} </i> 
+                        <p> <i class='mx-3 text-primary'>Creer le : {{tontine.create_at |date:"D d M Y"}}</i> 
+                          || <i class='mx-3 text-primary'>La date de fin : {{tontine.end_date}} </i>
+                          <br>  <i class='mx-3 text-primary'>La date de fin : {{tontine.user.first_name}}- {{tontine.user.last_name}} </i>
                         </p>
                       </div>
                       <div class="card-category">{{tontine.description}} </div>
@@ -145,7 +146,7 @@
                               <h6><b>Objectif </b></h6>
                               <p class="text-muted">mois</p>
                             </div>
-                            <h5 class="text-success fw-bold"> {{tontine.objectif}} GNF</h5>
+                            <h6 class="text-success fw-bold"> {{tontine.objectif}} GNF</h6>
                           </div>
                           <div class="progress progress-sm">
                             <div

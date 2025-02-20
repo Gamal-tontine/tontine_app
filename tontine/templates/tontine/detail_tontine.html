@@ -40,8 +40,12 @@
                       <div class="card-title">
                         {{tontine.name}} | <span class="text-danger ">Montant: {{tontine.amount}} GNF</span> 
                         <p> <i>Creer le : {{tontine.create_at |date:"D d M Y"}}</i> 
-                          <br> <i>La date de fin : {{tontine.end_date |date:"D d M Y"}}</i> 
-                          <br> la frequence : {{tontine.frequence}}
+                            || 
+                            <i>Start date : {{tontine.start_at |date:"D d M Y"}}</i> 
+                            <br> 
+                            la frequence : {{tontine.frequence}}
+                            ||
+                            Administrateur : {{tontine.admin.first_name}} - {{tontine.admin.last_name}}
                         </p>
                       </div>
                       <div class="card-category">{{tontine.description}} </div>
@@ -49,24 +53,24 @@
                     <!-- le contenu de la droite sur les details -->
                     <div class="right-content " style="margin-left: auto;">
                       <!-- relancer -->
-                      {% if tontine.is_finished %}
+                      {% if tontine.is_finish %}
                         <a href="" style="color: rgb(251, 243, 26); max-width: 50px; margin-right: 10px;">
                           <i class="fas fa-redo"></i>
                         </a>
                       {% endif %}
                       <!-- Demarer -->
-                      {% if is_full %}
+                      {% if tontine.is_full and not tontine.start_at %}
                         <a href="{% url 'tontine:demarer' tontine.uid %}" style="color: rgb(26, 251, 37); max-width: 50px; margin-right: 10px;">
                           <i class="fas fa-play-circle"></i>
                         </a>
-                      {% else %}
+                      {% elif not tontine.is_full %}
                       <!-- en attente -->
                         <span style="color: rgb(26, 97, 251); max-width: 50px; margin-right: 10px;">
                           <i class="fas fa-hourglass-half"></i>
                         </span>
                       {% endif %}
                       <!-- la modification de la tontine -->
-                      {% if not is_full %}
+                      {% if not tontine.start_at %}
                        <a href="{% url 'tontine:update_tontine' tontine.uid %}">
                           <i class="fa fa-edit" style="color: rgb(26, 97, 251); max-width: 50px; margin-right: 10px;"></i>
                        </a>
@@ -140,7 +144,7 @@
                               <h6><b>Solde </b></h6>
                               <p class="text-muted">Actuel</p>
                             </div>
-                            <h4 class="text-success fw-bold"> {{tontine.total_revenu}} GNF</h4>
+                            <h4 class="text-success fw-bold"> {{tontine.periode_amount}} GNF</h4>
                           </div>
                           <div class="progress progress-sm">
                             <div
@@ -164,7 +168,7 @@
                               <h6><b>Non Payer </b></h6>
                               <p class="text-muted">Acquitement</p>
                             </div>
-                            <h4 class="text-danger fw-bold"> {{non_payers_count}} / {{ tontine.total_members }}</h4>
+                            <h4 class="text-danger fw-bold"> {{non_payers_count}} / {{ tontine.limite_member }}</h4>
                           </div>
                           <div class="progress progress-sm">
                             <div
@@ -222,8 +226,8 @@
                             </div>
                             <div class="col-7 col-stats">
                               <div class="numbers">
-                                <h4 class="card-title"> {{tontine.next_recipient.last_name}} </h4>
-                                {% if tontine.payers.count == tontine.total_members %}
+                                <h4 class="card-title"> {{recipient_periode}} </h4>
+                                {% if tontine.total_revenu == tontine.periode_amount %}
                                 <a href="" class="bg-warning-gradient" style="padding: 6px; border-radius: 12pxy;">
                                   <i class="fas fa-money-check-alt"></i>
                                   Payer
@@ -266,7 +270,7 @@
                             <div class="col col-stats">
                               <div class="numbers">
                                 <p class="card-category">Periode </p>
-                                <h4 class="card-title"> {{tontine.current_round}} </h4>
+                                <h4 class="card-title"> {{tontine.periode_count}} </h4>
                               </div>
                             </div>
                           </div>
@@ -302,7 +306,7 @@
                                 <th>Profil</th>
                                 <th>Nom</th>
                                 <th>Acquitement</th>
-                                <th>Payement</th>
+                                <th>Nbr Jours</th>
                                 <th style="width: 10%">Action</th>
                               </tr>
                             </thead>
@@ -316,18 +320,18 @@
                               </tr>
                             </tfoot>
                             <tbody>
-                              {% for user, amount in members_due_amounts.items %}
+                              {% for member_non_paid in non_payers %}
                               <tr>
                                 <td> 
-                                  {% if user.profil.url %}
-                                  <img src=" {{ user.profil.url }}" style="width: 40px; height:40px; border-radius: 250px;" alt="">
+                                  {% if member_non_paid.user.profil.url %}
+                                  <img src=" {{ member_non_paid.user.profil.url }}" style="width: 40px; height:40px; border-radius: 250px;" alt="">
                                   {% else %}
                                      <i class="fas fa-user"></i>
                                   {% endif %}
                                 </td>
-                                <td> {{ user.first_name }} {{ user.last_name }} </td>
-                                <td class="text-danger"> {{ amount }} GNF</td>
-                                <td>{{ tontine.currency }}</td>
+                                <td> {{ member_non_paid.user.first_name }} {{ user.last_name }} </td>
+                                <td class="text-danger"> {{ member_non_paid.amount_due }} GNF</td>
+                                <td>{{ member_non_paid.days_overdue }}</td>
                                 <td>
                                   <div class="form-button-action">
                                     
@@ -341,10 +345,14 @@
                                             <h1 class="modal-title fs-5" id="payementModalLabel">Paiement des frais de la tontine</h1>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                           </div>
-                                          <form action="{% url 'payement:acquitement_collective_admin' tontine.uid user.id %}" method="post">
+                                          <form action="{% url 'payement:acquitement_collective_admin' tontine.uid member_non_paid.user.id %}" method="post">
                                             {% csrf_token %}
                                             <div class="modal-body">
-                                              {{ acquitement.as_p }}
+                                              <div >
+                                                <input type="number" class="form-control my-2" value="{{ tontine.amount }}" name="amount" readonly>
+                                                {{ acquitement.moyen }}
+                                              </div>
+                                              
                                             </div>
                                             <div class="modal-footer">
                                               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>

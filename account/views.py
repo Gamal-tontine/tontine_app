@@ -14,6 +14,7 @@ from .utils.decrypte import decrypte_token
 from .forms import CreateForm, LoginForm, AccountFindForPasswordForm,NewPasswordForm
 from .models import User
 from .utils.send_mail import sender_mail,send_mail_for_password
+
 class CreateUserView(CreateView):
     form_class = CreateForm
     model = User
@@ -27,7 +28,8 @@ class CreateUserView(CreateView):
             user.save()
             sender_mail(user)
         messages.success(request=self.request,
-                         message='Le compte a été cree avec success')
+                         message='Le compte a été cree avec success.'
+                         'un mail d\'activation vous a été envoyer merci de cliquez.')
         return redirect(self.success_url)
     
 class LoginView(LoginView):
@@ -37,10 +39,10 @@ class LoginView(LoginView):
     template_name = 'account/singin.html'
     
     def get_success_url(self):
-        if self.request.user.statue == 'admin':
-            return self.success_url
-        else:
+        if self.request.user.statue == 'user':
             return self.user_dashboard_link
+        else:
+            return self.success_url
     
             
 class ActivationAccountView(View):

@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    "django_celery_beat",
+
     'account',
     'admin_tontine',
     'user_tontine',
@@ -159,5 +161,8 @@ EMAIL_HOST_USER = 'dounoh0@gmail.com'
 EMAIL_HOST_PASSWORD = 'omux ovwg allh xzxe'  
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER  
 
-CELERY_BROKER_URL = 'amqp://tontine_user:tontine_pass@localhost:5677//'
+CELERY_BROKER_URL = 'amqp://tontine_user:tontine_pass@localhost:5672//'
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
+
+# CELERY_RESULT_BACKEND = 'rpc://'
 

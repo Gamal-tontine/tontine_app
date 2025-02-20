@@ -3,10 +3,8 @@ from django.contrib.auth.forms import UserCreationForm,AuthenticationForm
 from django.contrib.auth import authenticate,login
 from django.core.exceptions import ValidationError
 
-from .utils.send_mail import sender_mail
 from .models import User
-
-
+from .utils.send_mail import sender_mail
 
 class CreateForm(UserCreationForm):
     first_name = forms.CharField(max_length=30, required= True, label='Prenom:',widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Votre prenom'}))
@@ -29,8 +27,9 @@ class CreateForm(UserCreationForm):
                     'password2',
                     )
         widgets = {
-            'statue': forms.Select(attrs={'class':'form-control', 'readonly':'readonly'}),
-        }
+                    'statue': forms.Select(attrs={'class': 'form-control'}),
+                    }
+
 
     def clean_email(self):
         email = self.cleaned_data.get('email')

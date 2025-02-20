@@ -1,6 +1,6 @@
-<p>Bonjour {{ user.first_name }} {{ user.last_name }},</p>
-<p>Merci de vous être inscrit sur notre plateforme !</p>
-<p>Pour activer votre compte, veuillez cliquer sur le lien ci-dessous :</p>
-<p><a href="http://{{ domaine }}{% url 'account:activation_account' uid=uid token=token %}">Activer mon compte</a></p>
-<p>Cordialement,</p>
-<p>L'équipe de [Tontine]</p>
+Bonjour {{ user.first_name }} {{ user.last_name }},
+Merci de vous être inscrit sur notre plateforme !
+Pour activer votre compte, veuillez cliquer sur le lien ci-dessous :
+http://{{ domaine }}{% url 'account:activation_account' uid=uid token=token %}
+Cordialement,
+L'équipe de [Tontine]

@@ -73,52 +73,21 @@ def delete_tontine_individuelle(request,uid):
     return redirect('admin_tontine:dashboard')
 
 
-        
-        
-# @login_required
-# def home(request):
-#     owner = get_object_or_404(Owner, user=request.user)
-#     deposits = Deposit.objects.filter(owner=owner)
-#     reminders = Reminder.objects.filter(owner=owner)
+class CategoryTontineIndividuelle(ListView):
+    model = TontineIndividuelle
+    template_name = 'tontine_individuelle/tontine_liste.html'
+    context_object_name = 'tontines'
 
-#     today = timezone.now().date()
-#     today_reminder = reminders.filter(date=today).first()
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        search_value = self.request.GET.get('search_value', '')
 
-#     if not today_reminder:
-#         Reminder.objects.create(
-#             owner=owner,
-#             message="N'oubliez pas de faire votre dépôt quotidien.",
-#             is_paid=False
-#         )
-#         today_reminder = Reminder.objects.filter(owner=owner, date=today).first()
+        if self.request.user.statue == 'admin':
+            queryset = queryset.filter(admin=self.request.user)
+        else:
+            queryset = queryset.filter(user=self.request.user)
 
-#     context = {
-#         'owner': owner,
-#         'deposits': deposits,
-#         'today_reminder': today_reminder,
-#     }
-#     return render(request, 'tontine/home.html', context)
+        if search_value:
+            queryset = queryset.filter(name__icontains=search_value) 
 
-# @login_required
-# def deposit(request):
-#     owner = get_object_or_404(Owner, user=request.user)
-#     if request.method == 'POST':
-#         form = DepositForm(request.POST)
-#         if form.is_valid():
-#             amount = form.cleaned_data['amount']
-#             Deposit.objects.create(owner=owner, amount=amount)
-#             owner.balance += amount
-#             owner.save()
-
-#             today = timezone.now().date()
-#             reminder = Reminder.objects.filter(owner=owner, date=today).first()
-#             if reminder:
-#                 reminder.is_paid = True
-#                 reminder.save()
-
-#             messages.success(request, 'Dépôt effectué avec succès !')
-#             return redirect('home')
-#     else:
-#         form = DepositForm()
-#     return render(request, 'tontine/deposit.html', {'form': form})
-
+        return queryset

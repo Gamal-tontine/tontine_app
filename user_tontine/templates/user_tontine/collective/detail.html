@@ -40,9 +40,13 @@
                       <div class="card-title">
                         {{tontine.name}} | <span class="text-danger ">Montant: {{tontine.amount}} GNF</span> 
                         <p> <i>Creer le : {{tontine.create_at |date:"D d M Y"}}</i> 
-                          <br> <i>La date de fin : {{tontine.end_date |date:"D d M Y"}}</i> 
-                          <br> la frequence : {{tontine.frequence}}
-                        </p>
+                          || 
+                          <i>Start date : {{tontine.start_at |date:"D d M Y"}}</i> 
+                          <br> 
+                          la frequence : {{tontine.frequence}}
+                          ||
+                          Administrateur : {{tontine.admin.first_name}} - {{tontine.admin.last_name}} <span style='color:blue;'> ( {{tontine.admin.email}} ) </span>
+                      </p>
                       </div>
                       <div class="card-category">{{tontine.description}} </div>
                     </div>
@@ -86,7 +90,7 @@
                               <h6><b>Solde </b></h6>
                               <p class="text-muted">Actuel</p>
                             </div>
-                            <h4 class="text-success fw-bold"> {{tontine.total_revenu}} GNF</h4>
+                            <h5 class="text-success fw-bold"> {{tontine.periode_amount}} GNF</h5>
                           </div>
                           <div class="progress progress-sm">
                             <div
@@ -110,7 +114,7 @@
                               <h6><b>Non Payer </b></h6>
                               <p class="text-muted">Acquitement</p>
                             </div>
-                            <h4 class="text-danger fw-bold"> {{non_payers_count}} / {{ tontine.total_members }}</h4>
+                            <h4 class="text-danger fw-bold">  {{non_payers_count}} / {{ tontine.limite_member }} </h4>
                           </div>
                           <div class="progress progress-sm">
                             <div
@@ -168,7 +172,7 @@
                             </div>
                             <div class="col-7 col-stats">
                               <div class="numbers">
-                                <h4 class="card-title"> {{tontine.next_recipient.last_name}} </h4>
+                                <h4 class="card-title"> {{recipient_periode}} </h4>
                               </div>
                             </div>
                           </div>
@@ -206,7 +210,7 @@
                             <div class="col col-stats">
                               <div class="numbers">
                                 <p class="card-category">Periode </p>
-                                <h4 class="card-title"> {{tontine.current_round}} </h4>
+                                <h4 class="card-title"> {{tontine.periode_count}} </h4>
                               </div>
                             </div>
                           </div>
@@ -256,18 +260,18 @@
                               </tr>
                             </tfoot>
                             <tbody>
-                              {% for user, amount in members_due_amounts.items %}
+                              {% for non_payer in non_payers %}
                               <tr>
                                 <td> 
-                                  {% if user.profil.url %}
-                                  <img src=" {{ user.profil.url }}" style="width: 40px; height:40px; border-radius: 250px;" alt="">
+                                  {% if non_payer.user.profil.url %}
+                                  <img src=" {{ non_payer.user.profil.url }}" style="width: 40px; height:40px; border-radius: 250px;" alt="">
                                   {% else %}
                                      <i class="fas fa-user"></i>
                                   {% endif %}
                                 </td>
-                                <td> {{ user.first_name }} {{ user.last_name }} </td>
-                                <td class="text-danger"> {{ amount }} GNF</td>
-                                <td>{{ tontine.currency }}</td>
+                                <td> {{ non_payer.user.first_name }} {{non_payer.user.last_name }} </td>
+                                <td class="text-danger"> {{ non_payer.amount_due }} GNF</td>
+                                <td>{{ member_non_paid.days_overdue }}</td>
                                 <td>
                                   <div class="form-button-action">
                                     
@@ -281,7 +285,7 @@
                                             <h1 class="modal-title fs-5" id="payementModalLabel">Paiement des frais de la tontine</h1>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                           </div>
-                                          <form action="{% url 'payement:acquitement' tontine.uid user.id %}" method="post">
+                                          <form action="" method="post">
                                             {% csrf_token %}
                                             <div class="modal-body">
                                               {{ acquitement.as_p }}

@@ -1,6 +1,7 @@
 from django import forms
 
-from .models import TontineCollective,TontineIndividuelle
+from .models import TontineCollective
+from tontine_individuelle.models import TontineIndividuelle
 
 class TontineCollectiveForm(forms.ModelForm):
     name = forms.CharField(max_length=30,required=True,label='Nom', widget=forms.TextInput(attrs={'class':'form-control','type':'text'}))

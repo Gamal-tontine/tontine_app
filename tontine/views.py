@@ -7,11 +7,13 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseBadRequest
 
-from .models import TontineCollective, TontineIndividuelle
+from .models import TontineCollective
+from account.models import User
 from .forms import TontineCollectiveForm, TontineIndeviduelleForm
 from .utils.qr_generator import qr_code_generator
 from config.settings import DOMAINE
-from payement.forms import AcquitementForm  # Correction : 'froms' -> 'forms'
+from payement.forms import AcquitementForm 
+from .tasks import mail_for_start_tontine,starte_tontine
 
 
 def generate_link(uid):
@@ -33,6 +35,7 @@ class CreateTontineView(LoginRequiredMixin, View):
             try:
                 tontine.qr_code = qr_code_generator(link)
                 tontine.save()
+
             except Exception as e:
                 return HttpResponseBadRequest(f"Erreur lors de la génération du QR code : {e}")
 
@@ -51,9 +54,10 @@ class JoingedTontineView(LoginRequiredMixin, View):
     def post(self, request, uid):
         tontine = get_object_or_404(TontineCollective, uid=uid)
         
-        if tontine.members.count() < tontine.limite_member and not tontine.members.filter(pk=request.user.pk).exists():
+        if tontine.members.count() < tontine.limite_member and not tontine.members.filter(pk=request.user.pk).exists() and not tontine.objects.filter(admin=request.user):
             tontine.members.add(request.user)
             tontine.save()
+            mail_for_start_tontine.apply_async(args=[tontine.id])
             messages.success(request, "Vous avez rejoint la tontine avec succès.")
             return redirect('tontine:detail_tontine', uid=tontine.uid)
         else:
@@ -72,17 +76,18 @@ class DetailTontineView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         tontine = context['tontine']
+        user = User.objects.get(pk=tontine.recipient_tontine_id)
+        username = f'{user.first_name} {user.last_name} '
+        acquitement = AcquitementForm()
         context.update({
-            'is_full': tontine.is_full,
-            'payers': tontine.payers,
-            'non_payers': tontine.non_payers,
-            'members_due_amounts': tontine.members_due_amounts,
-            'non_payers_count': tontine.non_payers_count(),
-            'payers_count': tontine.payers_count,
-            'acquitement': AcquitementForm(),
+            'payers': '',
+            'non_payers': tontine.unpaid_members,
+            'recipient_periode': username,
+            'non_payers_count': tontine.unpaid_members_count,
+            'payers_count': tontine.paid_members_count,
+            'acquitement': acquitement,
         })
         return context    
-
 
 class PageLinkTontineView(LoginRequiredMixin, View):
     def get(self, request, uid):
@@ -95,7 +100,7 @@ class DeleteTontineView(LoginRequiredMixin, View):
     def post(self, request, uid):
         tontine = get_object_or_404(TontineCollective, uid=uid)
 
-        if not tontine.is_full and not tontine.is_finished:
+        if not tontine.start_at and not tontine.is_finish:
             tontine.delete()
             messages.success(request, "Tontine supprimée avec succès.")
             return redirect('admin_tontine:dashboard')
@@ -121,5 +126,31 @@ class UpdateTontineView(LoginRequiredMixin, UpdateView):
 def demarrer_tontine(request, uid):
     tontine = get_object_or_404(TontineCollective, uid=uid)
     tontine.start_tontine()
+    tontine.recipient()  
+    tontine.periode_count += 1
+    tontine.save()
+    starte_tontine.apply_async(args=[tontine.pk])
     messages.success(request, "Tontine démarrée avec succès.")
     return redirect('tontine:detail_tontine', uid=tontine.uid)
+
+from django.views.generic import ListView
+from .models import TontineCollective
+
+class CategoryTontine(ListView):
+    model = TontineCollective
+    template_name = 'tontine/tontine_liste.html'
+    context_object_name = 'tontines'
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        search_value = self.request.GET.get('search_value', '')
+
+        if self.request.user.statue == 'admin':
+            queryset = queryset.filter(admin=self.request.user)
+        else:
+            queryset = queryset.filter(members=self.request.user)
+
+        if search_value:
+            queryset = queryset.filter(name__icontains=search_value) 
+
+        return queryset
