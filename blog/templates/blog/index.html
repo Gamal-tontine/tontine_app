@@ -5,26 +5,26 @@
   <div class="header_section">
     <div class="header_left">
       <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="logo"><a href="index.html"><img src="{% static 'blog/images/logo.png' %}"></a></div>
+        <div class="logo"><a href="index.html"><img style="width: 60px;" src="{% static 'blog/images/logo.png' %}"></a></div>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav mr-auto">
             <li class="nav-item">
-              <a class="nav-link" href=" {% url 'blog:index' %} ">Accueil</a>
+              <a class="nav-link" href=" {% url 'blog:index' %} " >Accueil</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href=" {% url 'blog:about' %} ">À propos</a>
+              <a class="nav-link" href=" {% url 'blog:about' %} ">About</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href=" {% url 'blog:services' %} ">Nos Services</a>
+              <a class="nav-link" href=" {% url 'blog:services' %}">Services</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href=" {% url 'blog:team' %} ">Équipe</a>
+              <a class="nav-link" href=" {% url 'blog:team' %} " >Équipe</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href=" {% url 'blog:contact' %}">Contact</a>
+              <a class="nav-link" href=" {% url 'blog:contact' %}" >Contact</a>
             </li>
           </ul>
         </div>

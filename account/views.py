@@ -82,26 +82,6 @@ class AccountFindForPasswordView(View):
         return render(request, 'account/find_account_by_password.html', {'form': form})
 
 
-    def post(self, request):
-        form = AccountFindForPasswordForm(request.POST)
-        if form.is_valid():
-            email = form.cleaned_data.get('email')
-            try:
-                user = User.objects.get(email=email)
-                # Envoyer l'e-mail de réinitialisation
-                send_mail_for_password(request, user)
-                messages.success(request, 'Le mail de réinitialisation a été envoyé à votre adresse.')
-                return redirect('account:signin')  # Assurez-vous que ce nom d'URL est correct
-            except User.DoesNotExist:
-                # Cela ne devrait pas arriver si le formulaire est bien configuré
-                messages.error(request, 'Le compte entré n’est associé à aucun utilisateur.')
-        else:
-            # Les erreurs de validation seront automatiquement affichées dans le formulaire
-            messages.error(request, 'Le formulaire n’est pas valide.')
-
-        # Réutiliser le formulaire contenant les erreurs
-        return render(request, 'account/find_account_by_password.html', {'form': form})
-
 class NewPasswordView(View):
     user = None
     def get(self,request,uid,token):
@@ -110,12 +90,13 @@ class NewPasswordView(View):
             user = User.objects.get(pk = id)
         except User.DoesNotExist:
             return render(request=request, template_name='account/error_activation.html')
-        user = decrypte_token(uid,token)
-        if user is not None:
+        
+        if default_token_generator.check_token(user,token):
             form = NewPasswordForm()
             return form
         else:
             return render(request=request, template_name='account/error_activation.html')
+        
         
     def post(self,request):
         form = NewPasswordForm(request.POST)

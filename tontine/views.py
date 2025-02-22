@@ -76,8 +76,11 @@ class DetailTontineView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         tontine = context['tontine']
-        user = User.objects.get(pk=tontine.recipient_tontine_id)
-        username = f'{user.first_name} {user.last_name} '
+        user,username = None,None
+        if tontine.is_full:
+            user = User.objects.get(pk=tontine.recipient_tontine_id)
+            username = f'{user.first_name} {user.last_name} '
+            
         acquitement = AcquitementForm()
         context.update({
             'payers': '',
