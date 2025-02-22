@@ -70,6 +70,7 @@ class DetailTontineView(LoginRequiredMixin, DetailView):
     template_name = 'tontine/detail_tontine.html'
     context_object_name = 'tontine'
 
+
     def get_object(self):
         return get_object_or_404(TontineCollective, uid=self.kwargs.get('uid'))
     
@@ -80,7 +81,7 @@ class DetailTontineView(LoginRequiredMixin, DetailView):
         if tontine.is_full:
             user = User.objects.get(pk=tontine.recipient_tontine_id)
             username = f'{user.first_name} {user.last_name} '
-            
+
         acquitement = AcquitementForm()
         context.update({
             'payers': '',
