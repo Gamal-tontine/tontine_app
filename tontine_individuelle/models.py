@@ -16,6 +16,7 @@ class TontineIndividuelle(models.Model):
     admin = models.ForeignKey('account.User', on_delete=models.PROTECT, related_name='tontine_individuelle_admin')
     user = models.ForeignKey("account.User", verbose_name="", related_name='user_tontine_individuelle' , on_delete=models.CASCADE)
     balance = models.DecimalField(max_digits=10, decimal_places=0, default=0)
+    paid = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name

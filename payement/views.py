@@ -36,48 +36,59 @@ class AcquitementCollectiveView(View):
             return render(request, 'tontine/acquitement_form.html', {'form': form, 'tontine': tontine})
        
 
-# def pay_preneur(tontine):
-#     # Vérifier si tous les membres ont payé
-#     all_paid_members = tontine.payers.count()
-#     total_members = tontine.total_members
-
-#     # Si tous les membres ont payé, procéder au paiement
-#     if all_paid_members == total_members:
-#         recipient = tontine.next_recipient
-
-#         # Vérifier si un paiement a déjà été effectué pour cette période
-#         if not Payment.objects.filter(tontine=tontine, recipient=recipient, date=tontine.period_end_date).exists():
-#             # Créer un enregistrement de paiement pour ce membre
-#             payment = Payment.objects.create(
-#                 tontine=tontine,
-#                 recipient=recipient,
-#                 amount=tontine.amount,
-#                 is_paid=True  # Marquer comme payé
-#             )
-
-#             # Envoyer une notification au preneur
-#             tontine.send_payment_notification(recipient, payment.amount)
-
-#             return payment
-#         else:
-#             return None
-#     else:
-#         # Si tous les membres n'ont pas payé, ne pas procéder au paiement
-#         return None
+class PayementCollective(View):
+    def paiement(self,tontine,recipient,amount, bloked_list):
+        if not recipient in bloked_list:
+            with transaction.atomic():
+                paiement = Payment()
+                paiement.tontine = tontine
+                paiement.recipient = recipient
+                paiement.amount = amount
+                paiement.save()
+                tontine.periode_amount = tontine.periode_amount - int(tontine.objectif)
+                tontine.save()
+                sender_mail_for_info.apply_async(args=[recipient.email,
+                                                    'Payement de la tontine',
+                                                    f'Vous avez reçu votre paiement de la tontine {tontine.name}'
+                                                        ' d\'une somme de {tontine.periode_amount} GNF'])
+            messages.success(request=self.request,message='Paiement effectuer avec success')
+            context = {'context': 'le paiement effectuer avec success',
+                       'confirm': False
+                        }
+            return render(request=self.request,template_name='payement/confirme_paiement', context=context)
+        
+        else:
+            messages.error(request=self.request, message='ce membre est deja sur la liste noire et peut pas recevoire sa paye')
+            tontine.recipient()
+            tontine.save()
+            return redirect('tontine:detail_tontine', tontine.uid)
 
 
+    def get(self,uid):
+        tontineCollective = get_object_or_404(TontineCollective,uid=uid)
+        recipient = get_object_or_404(User,pk= TontineCollective.recipient_tontine_id)
+        blocked_user = tontineCollective.blocked_members
 
-class HistoriqueView(View):
-    def get(self, request, user, tontine):
-        payement = Payment.objects.filter(tontine = tontine, recipient = user)
-        acquitement = Acquitement.objects.filter(tontine = tontine, user = user)
-        context = {
-            'payement': payement,
-            'acquitement': acquitement
-        }
-        return render(request= request, temeplate_name = 'payement/historique.html', context= context)
-    
-   
+        if tontineCollective.objectif <= tontineCollective.periode_amount:
+            self.paiement(tontine=tontineCollective,
+                          recipient=recipient,
+                          amount=tontineCollective.periode_amount,
+                          bloked_list= blocked_user)
+        
+        if blocked_user:
+            context = {
+                'context': 'Tous les membres de cette tontine n\'ont '
+                            'pas effectuer l\'integraliter de leurs acquitements '
+                            'vous voulez passer au payement du preneur?',
+                'confirm': True
+            }
+            return render(request=self.request,template_name='payement/confirme_paiement', context=context)
+        else:
+            messages.error(self.request,'paiement impossible pour le moment !!')
+            return redirect('tontine:detail_tontine', tontineCollective.uid)
+        
+
+
 class AcquitementIndividuelleAdmin(View):
     def post(self,request,uid):
         tontine = get_object_or_404(TontineIndividuelle,uid = uid)
@@ -106,24 +117,6 @@ class AcquitementIndividuelleAdmin(View):
             return redirect('tontine_individuelle:datail_tontine_individuelle', tontine.uid)
 
 
-class PayementIndividuelleView(View):
-    def post(self,request,uid):
-        tontine = get_object_or_404(TontineIndividuelle,uid=uid)
-        if not tontine.objectif  == tontine.balance:
-            messages.error(request,'vous ne pouvez pas effectuer le payement')
-            return redirect('tontine_individuelle:datail_tontine_individuelle', tontine.uid)
-        with transaction.atomic():
-            Payment.objects.create(tontine= tontine,recipient=tontine.user,amount= tontine.balence )
-            tontine.balance = 0.0
-            tontine.save()
-            sender_mail_for_info.apply_async(
-                args=[
-                    tontine.user.email,
-                    'Payement de la tontine',
-                    f'Cher(e) {tontine.user.first_name} vous avez reçu virement de {tontine.balence - tontine.amount} GNF pour votre participation a la tontine individuelle {tontine.name}'])
-        messages.success(request,'le payement a ete effectuer avec success ')
-    
-    
 class AcquitementIndividuelleUserView(View):
     def post(self,request,uid):
         tontine = get_object_or_404(TontineIndividuelle,uid = uid)
@@ -148,3 +141,36 @@ class AcquitementIndividuelleUserView(View):
             messages.error(request=request, message='le montant saisie est inferieur au montant a deposer chaque jours')
             return redirect('tontine_individuelle:datail_tontine_individuelle', tontine.uid)
 
+
+
+class PayementIndividuelleView(View):
+    def get(self,request,uid):
+        tontine = get_object_or_404(TontineIndividuelle,uid=uid)
+        if not tontine.objectif  == tontine.balance:
+            messages.error(request,'vous ne pouvez pas effectuer le payement')
+            return redirect('tontine_individuelle:datail_tontine_individuelle', tontine.uid)
+        with transaction.atomic():
+            PaymentIndividuelle.objects.create(tontine= tontine,recipient=tontine.user,amount= tontine.balance )
+            tontine.balance = 0
+            tontine.paid = True
+            tontine.save()
+            sender_mail_for_info.apply_async(
+                args=[
+                    tontine.user.email,
+                    'Payement de la tontine',
+                    f'Cher(e) {tontine.user.first_name} vous avez reçu virement de {tontine.balance - tontine.amount} GNF pour votre participation a la tontine individuelle {tontine.name}'])
+        messages.success(request,'le payement a ete effectuer avec success ')
+        return redirect('tontine_individuelle:datail_tontine_individuelle', tontine.uid)
+
+    
+
+class HistoriqueView(View):
+    def get(self, request, user, tontine):
+        payement = Payment.objects.filter(tontine = tontine, recipient = user)
+        acquitement = Acquitement.objects.filter(tontine = tontine, user = user)
+        context = {
+            'payement': payement,
+            'acquitement': acquitement
+        }
+        return render(request= request, temeplate_name = 'payement/historique.html', context= context)
+    

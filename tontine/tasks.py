@@ -19,6 +19,14 @@ def reminder_paiement_for_day():
                     fail_silently=False,
                 )
 
+        for blocked in tontine.blocked_members:
+            send_mail(
+                subject= 'ALERTE ',
+                message= f'Vous avez été bloquer de la tontine {tontine.name} pour des raisons de non paiement',
+                from_email=DEFAULT_FROM_EMAIL,
+                recipient_list=[blocked.email]
+            )
+
 
 @shared_task
 def reminder_paiement_for_week():
@@ -55,7 +63,7 @@ def reminder_paiement_for_month():
 def recipient_date():
     tontines = TontineCollective.objects.all()
     for tontine in tontines:
-        if tontine.periode_amount == tontine.objectif:
+        if tontine.periode_amount >= tontine.objectif:
             send_mail(
                 subject='RAPPEL DE PAIEMENT',
                 message= f' chere administrateur la tontine {tontine.name} a atteinte la fin de sa periode vous pouvez payer le preneur merci',

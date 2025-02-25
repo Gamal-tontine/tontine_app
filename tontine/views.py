@@ -57,7 +57,8 @@ class JoingedTontineView(LoginRequiredMixin, View):
         if tontine.members.count() < tontine.limite_member and not tontine.members.filter(pk=request.user.pk).exists() and not tontine.objects.filter(admin=request.user):
             tontine.members.add(request.user)
             tontine.save()
-            mail_for_start_tontine.apply_async(args=[tontine.id])
+            if tontine.is_full:
+                mail_for_start_tontine.apply_async(args=[tontine.id])
             messages.success(request, "Vous avez rejoint la tontine avec succès.")
             return redirect('tontine:detail_tontine', uid=tontine.uid)
         else:
@@ -86,6 +87,7 @@ class DetailTontineView(LoginRequiredMixin, DetailView):
         context.update({
             'payers': '',
             'non_payers': tontine.unpaid_members,
+            'blockeds': tontine.blocked_members,
             'recipient_periode': username,
             'non_payers_count': tontine.unpaid_members_count,
             'payers_count': tontine.paid_members_count,

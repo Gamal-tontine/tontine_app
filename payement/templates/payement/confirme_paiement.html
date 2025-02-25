@@ -1,0 +1,134 @@
+{% extends "admin_tontine/base.html" %}
+{% block content %}
+<div class="wrapper">
+  {% include "admin_tontine/seidebar.html" %}
+  <div class="main-panel">
+      {% include "admin_tontine/navbar.html" %}
+
+        <div class="container mx-3">
+            
+            {% extends "admin_tontine/base.html" %}
+{% block content %}
+<div class="wrapper">
+  {% include "admin_tontine/seidebar.html" %}
+  <div class="main-panel">
+      {% include "admin_tontine/navbar.html" %}
+
+        <div class="container mx-3">
+
+            <div class="card text-center">
+                <div class="card-header">
+                  Payement
+                </div>
+                
+                <div class="card-body">
+                    <h5 class="card-title">
+                        {% if confirm %}
+                            <i class="fa fa-trophy"></i>
+                        {% else %}
+                            <i class="fa fa-times-circle"></i>
+                        {% endif %}
+                    </h5>
+                    <p class="card-text">
+                        {% context %}
+                    </p>
+                    {% confirm %}
+                        <a href="#" class="btn btn-primary">Payer</a>
+                        <a href="#" class="btn btn-primary">Annuler</a>
+                    {% else %}
+                        <a href="#" class="btn btn-primary">Retour</a>
+                    {%endif%}
+                </div>
+
+                <div class="card-footer text-body-secondary">
+                  2 days ago
+                </div>
+              </div>
+        
+            
+        </div>
+    </div>
+    
+
+   <!-- la fin du message toast -->
+        
+       <!-- Toast -->
+            {% if messages %}
+              {% for message in messages %}
+                <div id="liveToast{{ forloop.counter }}" class="toast align-items-center text-bg-dark border-0" role="alert" aria-live="assertive" aria-atomic="true" style="position: fixed; bottom: 10px; right: 10px; z-index: 1050;">
+                  <div class="toast-header">
+                   <i class="fa-regular fa-bell me-2"></i>
+                    <strong class="me-auto">Notifications</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Fermer"></button>
+                  </div>
+                  <div class="toast-body {% if 'success' in message.tags %} text-success {% else %} text-danger {% endif %}">
+                    {{ message }}
+                  </div>
+                </div>
+              {% endfor %}
+            {% endif %}
+
+        <script>
+          // Affichage automatique des toasts au chargement
+          window.addEventListener('load', () => {
+            {% for message in messages %}
+              const toastLiveExample = document.getElementById('liveToast{{ forloop.counter }}');
+              if (toastLiveExample) {
+                const toastBootstrap = new bootstrap.Toast(toastLiveExample, { delay: 5000 });
+                toastBootstrap.show();
+              }
+            {% endfor %}
+          });
+        </script>
+
+
+
+  </div>
+
+
+{% endblock  %}
+
+
+            
+        </div>
+    </div>
+    
+
+   <!-- la fin du message toast -->
+        
+       <!-- Toast -->
+            {% if messages %}
+              {% for message in messages %}
+                <div id="liveToast{{ forloop.counter }}" class="toast align-items-center text-bg-dark border-0" role="alert" aria-live="assertive" aria-atomic="true" style="position: fixed; bottom: 10px; right: 10px; z-index: 1050;">
+                  <div class="toast-header">
+                   <i class="fa-regular fa-bell me-2"></i>
+                    <strong class="me-auto">Notifications</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Fermer"></button>
+                  </div>
+                  <div class="toast-body {% if 'success' in message.tags %} text-success {% else %} text-danger {% endif %}">
+                    {{ message }}
+                  </div>
+                </div>
+              {% endfor %}
+            {% endif %}
+
+        <script>
+          // Affichage automatique des toasts au chargement
+          window.addEventListener('load', () => {
+            {% for message in messages %}
+              const toastLiveExample = document.getElementById('liveToast{{ forloop.counter }}');
+              if (toastLiveExample) {
+                const toastBootstrap = new bootstrap.Toast(toastLiveExample, { delay: 5000 });
+                toastBootstrap.show();
+              }
+            {% endfor %}
+          });
+        </script>
+
+
+
+  </div>
+
+
+{% endblock  %}
+

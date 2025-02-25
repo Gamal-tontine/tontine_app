@@ -36,6 +36,7 @@ class TontineCollective(models.Model):
     recipient_tontine_id = models.IntegerField(default=0)
     periode_count = models.IntegerField(default=0)
 
+
     def __str__(self):
         return self.name
 
@@ -90,35 +91,19 @@ class TontineCollective(models.Model):
         if self.start_at:
             unpaid_members = []
             for member in self.members.all():
-                last_payment = Acquitement.objects.filter(tontine=self, user=member).order_by('-date').first()
+                # last_payment = Acquitement.objects.filter(tontine=self, user=member).order_by('-date').first()
+                last_payment = Acquitement.objects.filter(tontine=self, user=member, date = timezone.now().date() )
                 if not last_payment:
+                    days_overdue = (timezone.now().date() - (last_payment.date if last_payment else self.start_at)).days
                     unpaid_members.append({
                         "user": member,
-                        "amount_due": self.amount,
-                        "days_overdue": (timezone.now().date() - (last_payment.date if last_payment else self.start_at)).days,
-                    })
-            return unpaid_members
-        else:
-            return None
-
-
-    # def unpaid_members(self):
-        if self.start_at:
-            unpaid_members = []
-            today = timezone.now().date()
-            for member in self.members.all():
-                last_payment = Acquitement.objects.filter(tontine=self, user=member, date__lte=today).order_by('-date').first()
-                last_payment_date = last_payment.date if last_payment else self.start_at
-                days_overdue = (today - last_payment_date).days
-                if days_overdue >= 0:
-                    unpaid_members.append({
-                        "user": member,
-                        "amount_due": self.amount,
+                        "amount_due": self.amount * days_overdue,
                         "days_overdue": days_overdue,
                     })
             return unpaid_members
         else:
             return None
+
 
 
     @property
@@ -127,11 +112,10 @@ class TontineCollective(models.Model):
     
     @property
     def blocked_members(self):
-        """Retourne les membres qui sont bloqués à cause de paiement en retard de plus de 2 jours."""
         blocked = []
         for member in self.unpaid_members:
-            if member['days_overdue'] > 2:
-                blocked.append(member['user'])
+            if member['days_overdue'] >= 1:
+                blocked.append(member)
         return blocked
 
     @property

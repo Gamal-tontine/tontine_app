@@ -13,8 +13,8 @@ class TontineView(View):
         if not request.user.is_authenticated:
             return redirect('login')  
 
-        tontine_collectives = TontineCollective.objects.filter(members=request.user)
-        tontine_individuelles = TontineIndividuelle.objects.filter(user=request.user)
+        tontine_collectives = TontineCollective.objects.filter(members=request.user).order_by('-create_at')
+        tontine_individuelles = TontineIndividuelle.objects.filter(user=request.user).order_by('-create_at')
 
         return render(request, 'user_tontine/index.html', {
             'tontine_collectives': tontine_collectives,

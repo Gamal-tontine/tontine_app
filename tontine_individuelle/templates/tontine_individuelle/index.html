@@ -228,7 +228,9 @@
                             </div>
                             <div class="col-7 col-stats">
                               <div class="numbers">
-                                <h4 class="card-title">  </h4>
+                                <h4 class="card-title"> 
+                                  {{tontine.user.first_name}} {{tontine.user.last_name}}
+                                </h4>
                                 <a href="{% url 'payement:payement_tontine_individuelle' tontine.uid %}" class="bg-warning-gradient" style="padding: 6px; border-radius: 12pxy;">
                                   <i class="fas fa-money-check-alt"></i>
                                   Payer

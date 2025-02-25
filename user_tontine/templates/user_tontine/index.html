@@ -257,18 +257,20 @@
                             <!-- debut de la colonne status -->
                             <td class="text-end">
                               {% if tontine_individuelle.statue %}
-                                <span class="badge badge-danger"> En cours</span>
-                              {% else %}
-                                <span class="badge badge-success">Fermer</span>
-                              {% endif %}
-                            </td>
-                          <!-- fin de colonne pour statut -->
-                            {% if not tontine_individuelle.statue %}
-                              <span class="badge badge-warning"> Relancer </span>
+                              <span class="badge badge-danger"> En cours</span>
+                            {% else %}
+                              <span class="badge badge-success">Fermer</span>
                             {% endif %}
-                          <!-- colonne pour les actions -->
+                            </td>
+                          
                           <td class="text-center">
-                              
+                              <!-- fin de colonne pour statut -->
+                            {% if tontine_individuelle.paid %}
+                              <span class="badge badge-success"> Payer </span>
+                            {% elif not tontine_individuelle.statue %}
+                              <span class="badge badge-warning"> Non Payer </span>
+                            {% endif %}
+                              <!-- colonne pour les actions -->
                           </td>
                           
                             <!-- fin de la colonne action -->

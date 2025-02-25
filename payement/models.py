@@ -15,6 +15,10 @@ class Acquitement(models.Model):
 
     def __str__(self):
         return f"{self.user} - {self.amount} ({self.date})"
+    
+    def count_paiement_def(self):
+        self.count_paiement += 1
+        return self.count_paiement
 
 
 class Payment(models.Model):
@@ -22,7 +26,7 @@ class Payment(models.Model):
     recipient = models.ForeignKey("account.User", on_delete=models.CASCADE, related_name='payement')
     amount = models.BigIntegerField()
     date = models.DateField(auto_now_add=True)
-    is_paid = models.BooleanField(default=False)  # Marque si le paiement a été effectué
+    is_paid = models.BooleanField(default=False)  
 
     def __str__(self):
         return f"Paiement de {self.amount} à {self.recipient.first_name} ({'Payé' if self.is_paid else 'Non payé'})"
