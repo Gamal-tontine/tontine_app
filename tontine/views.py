@@ -1,19 +1,29 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.views import View
-from django.views.generic import CreateView, DetailView, ListView, DeleteView, UpdateView
-from django.urls import reverse_lazy, reverse
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseBadRequest
+from django.shortcuts import get_object_or_404
+from django.shortcuts import redirect
+from django.shortcuts import render
+from django.urls import reverse
+from django.urls import reverse_lazy
+from django.views import View
+from django.views.generic import CreateView
+from django.views.generic import DeleteView
+from django.views.generic import DetailView
+from django.views.generic import ListView
+from django.views.generic import UpdateView
 
+from .forms import TontineCollectiveForm
+from .forms import TontineIndeviduelleForm
+from .models import Blocked_user
 from .models import TontineCollective
-from account.models import User
-from .forms import TontineCollectiveForm, TontineIndeviduelleForm
+from .tasks import mail_for_start_tontine
+from .tasks import starte_tontine
 from .utils.qr_generator import qr_code_generator
+from account.models import User
 from config.settings import DOMAINE
-from payement.forms import AcquitementForm 
-from .tasks import mail_for_start_tontine,starte_tontine
+from payement.forms import AcquitementForm
 
 
 def generate_link(uid):
@@ -41,8 +51,9 @@ class CreateTontineView(LoginRequiredMixin, View):
 
             messages.success(request, "Tontine créée avec succès !")
             return render(request, 'tontine/link_tontine.html', {'tontine': tontine, 'link': link})
-        
-        messages.error(request, "Le formulaire est invalide. Veuillez corriger les erreurs.")
+
+        messages.error(
+            request, "Le formulaire est invalide. Veuillez corriger les erreurs.")
         return render(request, 'tontine/form_tontine.html', {'form': form})
 
 
@@ -53,16 +64,18 @@ class JoingedTontineView(LoginRequiredMixin, View):
 
     def post(self, request, uid):
         tontine = get_object_or_404(TontineCollective, uid=uid)
-        
+
         if tontine.members.count() < tontine.limite_member and not tontine.members.filter(pk=request.user.pk).exists() and not tontine.objects.filter(admin=request.user):
             tontine.members.add(request.user)
             tontine.save()
             if tontine.is_full:
                 mail_for_start_tontine.apply_async(args=[tontine.id])
-            messages.success(request, "Vous avez rejoint la tontine avec succès.")
+            messages.success(
+                request, "Vous avez rejoint la tontine avec succès.")
             return redirect('tontine:detail_tontine', uid=tontine.uid)
         else:
-            messages.error(request, "Impossible de rejoindre : La tontine est complète ou vous êtes déjà membre.")
+            messages.error(
+                request, "Impossible de rejoindre : La tontine est complète ou vous êtes déjà membre.")
             return redirect('tontine:joined_tontine', uid=tontine.uid)
 
 
@@ -71,29 +84,30 @@ class DetailTontineView(LoginRequiredMixin, DetailView):
     template_name = 'tontine/detail_tontine.html'
     context_object_name = 'tontine'
 
-
     def get_object(self):
         return get_object_or_404(TontineCollective, uid=self.kwargs.get('uid'))
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         tontine = context['tontine']
-        user,username = None,None
+        user, username, blockeds = None, None, None
         if tontine.is_full:
             user = User.objects.get(pk=tontine.recipient_tontine_id)
             username = f'{user.first_name} {user.last_name} '
+            blockeds = Blocked_user.objects.filter(tontine=tontine)
 
         acquitement = AcquitementForm()
         context.update({
             'payers': '',
             'non_payers': tontine.unpaid_members,
-            'blockeds': tontine.blocked_members,
+            'blockeds': blockeds,
             'recipient_periode': username,
             'non_payers_count': tontine.unpaid_members_count,
             'payers_count': tontine.paid_members_count,
             'acquitement': acquitement,
         })
-        return context    
+        return context
+
 
 class PageLinkTontineView(LoginRequiredMixin, View):
     def get(self, request, uid):
@@ -111,7 +125,8 @@ class DeleteTontineView(LoginRequiredMixin, View):
             messages.success(request, "Tontine supprimée avec succès.")
             return redirect('admin_tontine:dashboard')
         else:
-            messages.error(request, "Suppression impossible : une tontine en cours ne peut pas être supprimée.")
+            messages.error(
+                request, "Suppression impossible : une tontine en cours ne peut pas être supprimée.")
             return redirect('tontine:detail_tontine', uid=tontine.uid)
 
 
@@ -132,15 +147,13 @@ class UpdateTontineView(LoginRequiredMixin, UpdateView):
 def demarrer_tontine(request, uid):
     tontine = get_object_or_404(TontineCollective, uid=uid)
     tontine.start_tontine()
-    tontine.recipient()  
+    tontine.recipient()
     tontine.periode_count += 1
     tontine.save()
     starte_tontine.apply_async(args=[tontine.pk])
     messages.success(request, "Tontine démarrée avec succès.")
     return redirect('tontine:detail_tontine', uid=tontine.uid)
 
-from django.views.generic import ListView
-from .models import TontineCollective
 
 class CategoryTontine(ListView):
     model = TontineCollective
@@ -157,6 +170,6 @@ class CategoryTontine(ListView):
             queryset = queryset.filter(members=self.request.user)
 
         if search_value:
-            queryset = queryset.filter(name__icontains=search_value) 
+            queryset = queryset.filter(name__icontains=search_value)
 
         return queryset

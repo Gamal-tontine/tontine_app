@@ -38,8 +38,8 @@
                     <!-- le contenue de la gauche sur le titre -->
                     <div class="left-content">
                       <div class="card-title">
-                        {{tontine.name}} | <span class="text-danger ">Montant: {{tontine.amount}} GNF</span> 
-                        <p> <i class='mx-3 text-primary'>Creer le : {{tontine.create_at |date:"D d M Y"}}</i> 
+                        {{tontine.name}} | <span class="text-danger ">Montant: {{tontine.amount}} GNF</span>
+                        <p> <i class='mx-3 text-primary'>Creer le : {{tontine.create_at |date:"D d M Y"}}</i>
                           || <i class='mx-3 text-primary'>La date de fin : {{tontine.end_date}} </i>
                           <br>  <i class='mx-3 text-primary'>La date de fin : {{tontine.user.first_name}}- {{tontine.user.last_name}} </i>
                         </p>
@@ -51,7 +51,7 @@
 
                      <!--  le bouton pour le payement -->
                       <i class="fa fa-money-bill-wave" data-bs-toggle="modal" data-bs-target="#payementModal" style="color: rgb(26, 97, 251); max-width: 50px; margin-right: 10px;"></i>
-                     
+
                       <!-- Début du modal pour le paiement -->
                       <div class="modal fade" id="payementModal" tabindex="-1" aria-labelledby="payementModalLabel" aria-hidden="true">
                         <div class="modal-dialog">
@@ -74,15 +74,13 @@
                         </div>
                       </div>
                       <!-- Fin du modal -->
-                                    
+
 
 
                       <!-- la modification de la tontine -->
-                      {% if not is_full %}
                        <a href="{% url 'tontine_individuelle:update_tontine_individuelle' tontine.uid %}">
                           <i class="fa fa-edit" style="color: rgb(26, 97, 251); max-width: 50px; margin-right: 10px;"></i>
                        </a>
-                       {% endif %}
                       <!-- supprimer la tontine -->
                         <i class="fas fa-trash "  data-bs-toggle="modal" data-bs-target="#deleteModal" style="color: red; max-width: 50px; margin-right: 10px;"> </i>
 
@@ -212,8 +210,8 @@
                         </div>
                       </div>
                     </div>
-                  </div> 
-                  
+                  </div>
+
                   <!-- la partie pour le paiement du la tontine -->
                   {% if  tontine.objectif == tontine.balance %}
                   <div class='row d-flex justify-content-center'>
@@ -228,7 +226,7 @@
                             </div>
                             <div class="col-7 col-stats">
                               <div class="numbers">
-                                <h4 class="card-title"> 
+                                <h4 class="card-title">
                                   {{tontine.user.first_name}} {{tontine.user.last_name}}
                                 </h4>
                                 <a href="{% url 'payement:payement_tontine_individuelle' tontine.uid %}" class="bg-warning-gradient" style="padding: 6px; border-radius: 12pxy;">
@@ -247,7 +245,17 @@
 
                   <!-- fin des details sur la tontine -->
 
+                  {% if tontine.paid %}
+                  <div class="container d-flex justify-content-center">
+                    <div class="card bg-success text-center p-3 text-white">
+                      <i class="fa fa-check bg-success"></i>
+                        Payement effectuer avec succes
+                    </div>
+                  </div>
+                  {% endif %}
+
                 </div>
+
 
 
                 <div class="card-body">
@@ -260,7 +268,7 @@
                         </div>
                       </div>
                       <div class="card-body">
-    
+
                         <!-- la liste de tous les membres de la tontine -->
                         <div class="table-responsive">
                           <table
@@ -298,7 +306,7 @@
                               {% empty %}
                               <p> Pas d'historique de paiement disponible </p>
                               {% endfor %}
-                              
+
                             </tbody>
                           </table>
                         </div>
@@ -313,7 +321,7 @@
 
                 <div class="card-footer">
                   <hr />
-                  Dounoh Tontine
+                  Tontine App
                 </div>
 
               </div>
@@ -322,10 +330,10 @@
           </div>
         </div>
       </div>
-    
+
 
    <!-- la fin du message toast -->
-        
+
        <!-- Toast -->
             {% if messages %}
               {% for message in messages %}
@@ -361,4 +369,3 @@
 </div>
 
 {% endblock  %}
-

@@ -6,6 +6,9 @@
       {% include "admin_tontine/navbar.html" %}
 
       <div class="container">
+        {% if is_blocked %}
+          <p class="text-center text-danger display-2">Vous êtes bloqué veillez contactez l'Administrateur pour vous debloquer.</p>
+        {% else %}
         <div class="page-inner">
           <div class="page-header">
             <h3 class="fw-bold mb-3">Detail Tontine</h3>
@@ -38,11 +41,11 @@
                     <!-- le contenue de la gauche sur le titre -->
                     <div class="left-content">
                       <div class="card-title">
-                        {{tontine.name}} | <span class="text-danger ">Montant: {{tontine.amount}} GNF</span> 
-                        <p> <i>Creer le : {{tontine.create_at |date:"D d M Y"}}</i> 
-                          || 
-                          <i>Start date : {{tontine.start_at |date:"D d M Y"}}</i> 
-                          <br> 
+                        {{tontine.name}} | <span class="text-danger ">Montant: {{tontine.amount}} GNF</span>
+                        <p> <i>Creer le : {{tontine.create_at |date:"D d M Y"}}</i>
+                          ||
+                          <i>Start date : {{tontine.start_at |date:"D d M Y"}}</i>
+                          <br>
                           la frequence : {{tontine.frequence}}
                           ||
                           Administrateur : {{tontine.admin.first_name}} - {{tontine.admin.last_name}} <span style='color:blue;'> ( {{tontine.admin.email}} ) </span>
@@ -52,7 +55,7 @@
                     </div>
                     <!-- le contenu de la droite sur les details -->
                     <div class="right-content " style="margin-left: auto;">
-                      
+
                     </div>
                   </div>
 
@@ -154,7 +157,7 @@
                         </div>
                       </div>
                     </div>
-                  </div>      
+                  </div>
 
                   <!-- fin des details sur la tontine -->
 
@@ -217,7 +220,7 @@
                         </div>
                       </div>
                     </div>
-                  </div>      
+                  </div>
 
                   <!-- fin des informations crutiales -->
 
@@ -234,7 +237,7 @@
                         </div>
                       </div>
                       <div class="card-body">
-    
+
                         <!-- la liste de tous les membres de la tontine -->
                         <div class="table-responsive">
                           <table
@@ -262,7 +265,7 @@
                             <tbody>
                               {% for non_payer in non_payers %}
                               <tr>
-                                <td> 
+                                <td>
                                   {% if non_payer.user.profil.url %}
                                   <img src=" {{ non_payer.user.profil.url }}" style="width: 40px; height:40px; border-radius: 250px;" alt="">
                                   {% else %}
@@ -274,9 +277,9 @@
                                 <td>{{ member_non_paid.days_overdue }}</td>
                                 <td>
                                   <div class="form-button-action">
-                                    
+                                    {% if request.user == non_payer.user %}
                                     <i class="fa fa-edit" data-bs-toggle="modal" data-bs-target="#payementModal"></i>
-
+                                    {% endif %}
                                     <!-- Début du modal pour le paiement -->
                                     <div class="modal fade" id="payementModal" tabindex="-1" aria-labelledby="payementModalLabel" aria-hidden="true">
                                       <div class="modal-dialog">
@@ -285,10 +288,14 @@
                                             <h1 class="modal-title fs-5" id="payementModalLabel">Paiement des frais de la tontine</h1>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                           </div>
-                                          <form action="" method="post">
+                                          <form action="{% url "payement:acquitement_collective_admin" tontine.uid request.user.id %}" method="post">
                                             {% csrf_token %}
                                             <div class="modal-body">
-                                              {{ acquitement.as_p }}
+                                              <div >
+                                                <input type="number" class="form-control my-2" value="{{ tontine.amount }}" name="amount" readonly>
+                                                {{ acquitement.moyen }}
+                                              </div>
+
                                             </div>
                                             <div class="modal-footer">
                                               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
@@ -299,7 +306,7 @@
                                       </div>
                                     </div>
                                     <!-- Fin du modal -->
-                                    
+
                                   </div>
                                 </td>
                               </tr>
@@ -328,93 +335,8 @@
                       </div>
                       <div class="card-body">
                         <!-- Modal -->
-                        <div
-                          class="modal fade"
-                          id="addRowModal"
-                          tabindex="-1"
-                          role="dialog"
-                          aria-hidden="true"
-                        >
-                          <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                              <div class="modal-header border-0">
-                                <h5 class="modal-title">
-                                  <span class="fw-mediumbold"> New</span>
-                                  <span class="fw-light"> Row </span>
-                                </h5>
-                                <button
-                                  type="button"
-                                  class="close"
-                                  data-dismiss="modal"
-                                  aria-label="Close"
-                                >
-                                  <span aria-hidden="true">&times;</span>
-                                </button>
-                              </div>
-                              <div class="modal-body">
-                                <p class="small">
-                                  Create a new row using this form, make sure you
-                                  fill them all
-                                </p>
-                                <form>
-                                  <div class="row">
-                                    <div class="col-sm-12">
-                                      <div class="form-group form-group-default">
-                                        <label>Name</label>
-                                        <input
-                                          id="addName"
-                                          type="text"
-                                          class="form-control"
-                                          placeholder="fill name"
-                                        />
-                                      </div>
-                                    </div>
-                                    <div class="col-md-6 pe-0">
-                                      <div class="form-group form-group-default">
-                                        <label>Position</label>
-                                        <input
-                                          id="addPosition"
-                                          type="text"
-                                          class="form-control"
-                                          placeholder="fill position"
-                                        />
-                                      </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                      <div class="form-group form-group-default">
-                                        <label>Office</label>
-                                        <input
-                                          id="addOffice"
-                                          type="text"
-                                          class="form-control"
-                                          placeholder="fill office"
-                                        />
-                                      </div>
-                                    </div>
-                                  </div>
-                                </form>
-                              </div>
-                              <div class="modal-footer border-0">
-                                <button
-                                  type="button"
-                                  id="addRowButton"
-                                  class="btn btn-primary"
-                                >
-                                  Add
-                                </button>
-                                <button
-                                  type="button"
-                                  class="btn btn-danger"
-                                  data-dismiss="modal"
-                                >
-                                  Close
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
                         <!-- fin du modal -->
-    
+
                         <!-- les infos dans la table -->
                         <div class="table-responsive">
                           <table
@@ -454,9 +376,11 @@
                                 <td>{{membre.phone_nomber}}</td>
                                 <td>
                                   <div class="form-button-action">
-                                    <a href="">
+                                    {% if request.user == membre %}
+                                    <a href="{% url 'payement:historique' user=membre.pk tontine=tontine.uid %}">
                                       <i class="fas fa-question-circle" style="color: rgb(41, 202, 251); max-width: 50px;"> </i>
                                     </a>
+                                    {% endif %}
                                   </div>
                                 </td>
                               </tr>
@@ -473,7 +397,7 @@
                  <!-- fin de la table de tous les membres -->
                 <div class="card-footer">
                   <hr />
-                  Dounoh Tontine
+                  Tontine App
                 </div>
 
               </div>
@@ -481,11 +405,11 @@
             </div>
           </div>
         </div>
+        {% endif %}
       </div>
-    
+
 
   </div>
 </div>
 
 {% endblock  %}
-

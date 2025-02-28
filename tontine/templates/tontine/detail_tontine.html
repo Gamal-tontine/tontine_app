@@ -38,11 +38,11 @@
                     <!-- le contenue de la gauche sur le titre -->
                     <div class="left-content">
                       <div class="card-title">
-                        {{tontine.name}} | <span class="text-danger ">Montant: {{tontine.amount}} GNF</span> 
-                        <p> <i>Creer le : {{tontine.create_at |date:"D d M Y"}}</i> 
-                            || 
-                            <i>Start date : {{tontine.start_at |date:"D d M Y"}}</i> 
-                            <br> 
+                        {{tontine.name}} | <span class="text-danger ">Montant: {{tontine.amount}} GNF</span>
+                        <p> <i>Creer le : {{tontine.create_at |date:"D d M Y"}}</i>
+                            ||
+                            <i>Start date : {{tontine.start_at |date:"D d M Y"}}</i>
+                            <br>
                             la frequence : {{tontine.frequence}}
                             ||
                             Administrateur : {{tontine.admin.first_name}} - {{tontine.admin.last_name}}
@@ -101,7 +101,7 @@
                           </div>
                         </div>
                         <!-- Fin du modal pour la suppression -->
-                      
+
 
                       <!-- informations sur la tontine -->
                       <a href="{% url 'tontine:link_join_tontine' tontine.uid %}">
@@ -168,7 +168,7 @@
                               <h6><b>Non Payer </b></h6>
                               <p class="text-muted">Acquitement</p>
                             </div>
-                            <h4 class="text-danger fw-bold"> {{non_payers_count}} / {{ tontine.limite_member }}</h4>
+                            <h4 class="text-danger fw-bold"> {{non_payers_count}} / {{ tontine.total_members }} </h4>
                           </div>
                           <div class="progress progress-sm">
                             <div
@@ -208,7 +208,7 @@
                         </div>
                       </div>
                     </div>
-                  </div>      
+                  </div>
 
                   <!-- fin des details sur la tontine -->
 
@@ -227,12 +227,12 @@
                             <div class="col-7 col-stats">
                               <div class="numbers">
                                 <h4 class="card-title"> {{recipient_periode}} </h4>
-                                {% if tontine.total_revenu == tontine.periode_amount %}
-                                <a href="" class="bg-warning-gradient" style="padding: 6px; border-radius: 12pxy;">
+
+                                <a href=" {% url 'payement:payement_tontine_collective' tontine.uid %}" class="bg-warning-gradient" style="padding: 6px; border-radius: 12pxy;">
                                   <i class="fas fa-money-check-alt"></i>
                                   Payer
                                 </a>
-                                {% endif %}
+
                               </div>
                             </div>
                           </div>
@@ -277,13 +277,11 @@
                         </div>
                       </div>
                     </div>
-                  </div>      
-
+                  </div>
                   <!-- fin des informations crutiales -->
 
+                  <!-- la table des non payeurs -->
                 </div>
-
-
                 <div class="card-body">
                   <!-- le debut de la table -->
                   <div class="col-md-12">
@@ -294,7 +292,7 @@
                         </div>
                       </div>
                       <div class="card-body">
-    
+                        {% if non_payers %}
                         <!-- la liste des membres qui nont pas payer la periode de la tontine -->
                         <div class="table-responsive">
                           <table
@@ -322,7 +320,7 @@
                             <tbody>
                               {% for member_non_paid in non_payers %}
                               <tr>
-                                <td> 
+                                <td>
                                   {% if member_non_paid.user.profil.url %}
                                   <img src=" {{ member_non_paid.user.profil.url }}" style="width: 40px; height:40px; border-radius: 250px;" alt="">
                                   {% else %}
@@ -334,7 +332,7 @@
                                 <td>{{ member_non_paid.days_overdue }}</td>
                                 <td>
                                   <div class="form-button-action">
-                                    
+
                                     <i class="fa fa-edit" data-bs-toggle="modal" data-bs-target="#payementModal"></i>
 
                                     <!-- Début du modal pour le paiement -->
@@ -352,7 +350,7 @@
                                                 <input type="number" class="form-control my-2" value="{{ tontine.amount }}" name="amount" readonly>
                                                 {{ acquitement.moyen }}
                                               </div>
-                                              
+
                                             </div>
                                             <div class="modal-footer">
                                               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
@@ -363,7 +361,7 @@
                                       </div>
                                     </div>
                                     <!-- Fin du modal -->
-                                    
+
                                   </div>
                                 </td>
                               </tr>
@@ -372,7 +370,9 @@
                           </table>
                         </div>
                         <!-- fin de la liste des membres qui nont pas payer la cotation du jour-->
-
+                        {% else %}
+                          <p class='text-center text-warning'> la liste est vide </p>
+                        {% endif %}
                       </div>
                     </div>
                   </div>
@@ -390,8 +390,8 @@
                           <h4 class="card-title">Liste de membres blockers de la tontine</h4>
                         </div>
                       </div>
+                      {% if blockeds %}
                       <div class="card-body">
-                       
                         <!-- les infos dans la table -->
                         <div class="table-responsive">
                           <table
@@ -419,48 +419,49 @@
                             <tbody>
                               {% for blocked in blockeds %}
                               <tr>
-                                <td> 
+                                <td>
                                   {% if blocked.user.profil.url %}
                                   <img src=" {{ blocked.user.profil.url }}" style="width: 40px; height:40px; border-radius: 250px;" alt="">
                                   {% else %}
                                      <i class="fas fa-user"></i>
                                   {% endif %}
                                 </td>
-                                <td> {{ blocked.user.first_name }} {{ user.last_name }} </td>
+                                <td> {{ blocked.user.first_name }} {{ blocked.user.last_name }} </td>
                                 <td class=""> {{ blocked.amount_due }} GNF</td>
                                 <td>{{ blocked.days_overdue }}</td>
                                 <td>
                                   <div class="form-button-action">
-                                    
-                                    <i class="fa fa-edit" data-bs-toggle="modal" data-bs-target="#payementModal"></i>
 
-                                    <!-- Début du modal pour le paiement -->
-                                    <div class="modal fade" id="payementModal" tabindex="-1" aria-labelledby="payementModalLabel" aria-hidden="true">
+                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#unblockModal">
+                                      Payer
+                                  </button>
+
+                                    <!-- Modal Bootstrap -->
+                                    <div class="modal fade" id="unblockModal" tabindex="-1" aria-labelledby="unblockModalLabel" aria-hidden="true">
                                       <div class="modal-dialog">
-                                        <div class="modal-content">
-                                          <div class="modal-header">
-                                            <h1 class="modal-title fs-5" id="payementModalLabel">Paiement des frais de la tontine</h1>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                          </div>
-                                          <form action="" method="post">
-                                            {% csrf_token %}
-                                            <div class="modal-body">
-                                              <div >
-                                                <input type="number" class="form-control my-2" value="{{ tontine.amount }}" name="amount" readonly>
-                                                {{ acquitement.moyen }}
+                                          <div class="modal-content">
+                                              <div class="modal-header">
+                                                  <h5 class="modal-title" id="unblockModalLabel">Déblocage de votre compte</h5>
+                                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
                                               </div>
-                                              
-                                            </div>
-                                            <div class="modal-footer">
-                                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                                              <button type="submit" class="btn btn-primary">Effectuer</button>
-                                            </div>
-                                          </form>
-                                        </div>
+                                              <div class="modal-body">
+                                                  <form method="post" action="{% url 'payement:unlock_user' tontine.uid blocked.user.pk %}">
+                                                      {% csrf_token %}
+                                                      <div class="mb-3">
+                                                          <label for="amount_paid" class="form-label">Montant à payer :</label>
+                                                          <input type="number" name="amount_paid" class="form-control" required>
+                                                      </div>
+                                                      <div class="modal-footer">
+                                                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                                          <button type="submit" class="btn btn-success">Payer et débloquer</button>
+                                                      </div>
+                                                  </form>
+                                              </div>
+                                          </div>
                                       </div>
                                     </div>
-                                    <!-- Fin du modal -->
-                                    
+
+
                                   </div>
                                 </td>
                               </tr>
@@ -471,11 +472,14 @@
                         <!-- fin des infos dans la table -->
 
                       </div>
+                      {% else %}
+                        <p class='text-center text-warning'> pas d'utilisateur bloquer </p>
+                      {% endif %}
                     </div>
                   </div>
                 </div>
                   <!-- fin de la table de tous les membres blocker-->
-                
+
 
 
                 <!-- debut de la table de tous les membres -->
@@ -490,93 +494,8 @@
                       </div>
                       <div class="card-body">
                         <!-- Modal -->
-                        <div
-                          class="modal fade"
-                          id="addRowModal"
-                          tabindex="-1"
-                          role="dialog"
-                          aria-hidden="true"
-                        >
-                          <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                              <div class="modal-header border-0">
-                                <h5 class="modal-title">
-                                  <span class="fw-mediumbold"> New</span>
-                                  <span class="fw-light"> Row </span>
-                                </h5>
-                                <button
-                                  type="button"
-                                  class="close"
-                                  data-dismiss="modal"
-                                  aria-label="Close"
-                                >
-                                  <span aria-hidden="true">&times;</span>
-                                </button>
-                              </div>
-                              <div class="modal-body">
-                                <p class="small">
-                                  Create a new row using this form, make sure you
-                                  fill them all
-                                </p>
-                                <form>
-                                  <div class="row">
-                                    <div class="col-sm-12">
-                                      <div class="form-group form-group-default">
-                                        <label>Name</label>
-                                        <input
-                                          id="addName"
-                                          type="text"
-                                          class="form-control"
-                                          placeholder="fill name"
-                                        />
-                                      </div>
-                                    </div>
-                                    <div class="col-md-6 pe-0">
-                                      <div class="form-group form-group-default">
-                                        <label>Position</label>
-                                        <input
-                                          id="addPosition"
-                                          type="text"
-                                          class="form-control"
-                                          placeholder="fill position"
-                                        />
-                                      </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                      <div class="form-group form-group-default">
-                                        <label>Office</label>
-                                        <input
-                                          id="addOffice"
-                                          type="text"
-                                          class="form-control"
-                                          placeholder="fill office"
-                                        />
-                                      </div>
-                                    </div>
-                                  </div>
-                                </form>
-                              </div>
-                              <div class="modal-footer border-0">
-                                <button
-                                  type="button"
-                                  id="addRowButton"
-                                  class="btn btn-primary"
-                                >
-                                  Add
-                                </button>
-                                <button
-                                  type="button"
-                                  class="btn btn-danger"
-                                  data-dismiss="modal"
-                                >
-                                  Close
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
                         <!-- fin du modal -->
-    
+
                         <!-- les infos dans la table -->
                         <div class="table-responsive">
                           <table
@@ -613,10 +532,10 @@
                                 </td>
                                 <td> {{membre.first_name}} {{membre.last_name}} </td>
                                 <td>{{membre.email}}</td>
-                                <td>{{membre.phone_nomber}}</td>
+                                <td>{{membre.phone_number}}</td>
                                 <td>
                                   <div class="form-button-action">
-                                    <a href="">
+                                    <a href="{% url 'payement:historique' user=membre.pk tontine=tontine.uid %}">
                                       <i class="fas fa-question-circle" style="color: rgb(41, 202, 251); max-width: 50px;"> </i>
                                     </a>
                                   </div>
@@ -629,13 +548,15 @@
                         <!-- fin des infos dans la table -->
 
                       </div>
+
                     </div>
                   </div>
                 </div>
                  <!-- fin de la table de tous les membres -->
+
                 <div class="card-footer">
                   <hr />
-                  Dounoh Tontine
+                  Tontine App
                 </div>
 
               </div>
@@ -644,7 +565,7 @@
           </div>
         </div>
       </div>
-    
+
 
              <!-- Toast -->
             {% if messages %}
@@ -680,4 +601,3 @@
 </div>
 
 {% endblock  %}
-

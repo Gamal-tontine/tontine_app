@@ -19,7 +19,7 @@
                   <i class="fas fa-plus"></i>
                   Individuelle</a>
 
-                <a href="#" type="button" data-bs-toggle="modal" data-bs-target="#collectiveModal"  class="btn btn-primary btn-round"> 
+                <a href="#" type="button" data-bs-toggle="modal" data-bs-target="#collectiveModal"  class="btn btn-primary btn-round">
                   <i class="fas fa-plus"></i> Collective
                 </a>
               </div>
@@ -86,13 +86,9 @@
                       </div>
                       <div class="col col-stats ms-3 ms-sm-0">
                         <div class="numbers">
-                          <p class="card-category">Tontine Active</p>
+                          <p class="card-category">Active</p>
                           <h4 class="card-title">
-                            {% if tontine.unfinished_tontines_count %}
-                              {{tontine.unfinished_tontines_count}}
-                            {% else %}
-                              0
-                            {% endif %}
+                            {{active}}
                           </h4>
                         </div>
                       </div>
@@ -113,13 +109,9 @@
                       </div>
                       <div class="col col-stats ms-3 ms-sm-0">
                         <div class="numbers">
-                          <p class="card-category">Tontine fermer</p>
+                          <p class="card-category">Fermer</p>
                           <h4 class="card-title">
-                            {% if tontine.finished_tontines_count %}
-                              {{tontine.finished_tontines_count}}
-                            {% else %}
-                              0
-                            {% endif %}
+                            {{inactive}}
                           </h4>
                         </div>
                       </div>
@@ -140,13 +132,9 @@
                       </div>
                       <div class="col col-stats ms-3 ms-sm-0">
                         <div class="numbers">
-                          <p class="card-category">Tontine Totale</p>
+                          <p class="card-category">Individuelle</p>
                           <h4 class="card-title">
-                            {% if tontine.total_tontines_count %}
-                              {{tontine.total_tontines_count}}
-                            {% else %}
-                              0
-                            {% endif %}
+                            {{individuelle}}
                           </h4>
                         </div>
                       </div>
@@ -167,8 +155,10 @@
                       </div>
                       <div class="col col-stats ms-3 ms-sm-0">
                         <div class="numbers">
-                          <p class="card-category">Total user</p>
-                          <h4 class="card-title">57</h4>
+                          <p class="card-category">Collective</p>
+                          <h4 class="card-title">
+                            {{collective}}
+                          </h4>
                         </div>
                       </div>
                     </div>
@@ -235,7 +225,7 @@
                             <td class="text-end"> {{tontine.create_at}} </td>
                             <td class="text-center"> {{tontine.total_members}} / {{tontine.limite_member}} </td>
                             <td class="text-center">{{tontine.amount}} GNF</td>
-                            
+
                             <!-- debut de la colonne status -->
                             <td class="text-end">
                               {% if tontine.is_finish %}
@@ -247,7 +237,7 @@
                               {% endif %}
                           </td>
                           <!-- fin de colonne pour statut -->
-                          
+
                           <!-- colonne pour les actions -->
                           <td class="text-center">
                               {% if tontine.is_finished %}
@@ -258,13 +248,13 @@
                                   <span class="badge badge-info">En attente</span>
                               {% endif %}
                           </td>
-                          
+
                             <!-- fin de la colonne action -->
                           </tr>
                           {% empty %}
                           <p class="mx-4">Vous n'avez pas de tontine collective en cours </p>
                           {% endfor %}
-                          
+
                         </tbody>
                       </table>
                       <!-- Pagination pour les tontines collectives -->
@@ -313,7 +303,7 @@
                     <div class="card-head-row card-tools-still-right">
                       <div class="card-title">Liste de mes tontines Individuelle</div>
                       <div class="card-tools">
-                       
+
                       </div>
                     </div>
                   </div>
@@ -343,10 +333,10 @@
                             <td class="text-end"> {{tontine_individuelle.create_at}} </td>
                             <td class="text-center"> {{tontine_individuelle.end_date}}</td>
                             <td class="text-center">{{tontine_individuelle.amount}} GNF</td>
-                            
+
                             <!-- debut de la colonne status -->
                             <td class="text-end">
-                              {% if tontine_individuelle.statue %}
+                              {% if tontine_individuelle.statue and not tontine_individuelle.paid %}
                                 <span class="badge badge-danger"> En cours</span>
                               {% else %}
                                 <span class="badge badge-success">Fermer</span>
@@ -361,7 +351,7 @@
                             {% endif %}
                               <!-- colonne pour les actions -->
                           </td>
-                          
+
                             <!-- fin de la colonne action -->
                           </tr>
                           {% empty %}
@@ -412,10 +402,10 @@
           </div>
         </div>
         <!-- le message de toast -->
-       
+
 
         <!-- la fin du message toast -->
-        
+
         <!-- Toast -->
             {% if messages %}
               {% for message in messages %}

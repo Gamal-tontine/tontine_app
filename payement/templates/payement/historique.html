@@ -1,172 +1,109 @@
 {% extends "admin_tontine/base.html" %}
+
 {% block content %}
 <div class="wrapper">
   {% include "admin_tontine/seidebar.html" %}
   <div class="main-panel">
       {% include "admin_tontine/navbar.html" %}
 
-        <div class="container mx-3">
-            
-            {% extends "admin_tontine/base.html" %}
-{% block content %}
-<div class="wrapper">
-  {% include "admin_tontine/seidebar.html" %}
-  <div class="main-panel">
-      {% include "admin_tontine/navbar.html" %}
+      <div class="container mx-3">
+        <div class="row">
+          <div class="col-md">
+            <div class="card">
+              <div class="card-header row">
+                <div class="col">
 
-        <div class="container mx-3">
-        
-            <div class="row">
-                <div class="col-md">
-                <div class="card">
-                    <div class="card-header row">
+                  <div class="page-header">
+                    <h3 class="fw-bold mb-3">Historique de paiement et acquitement</h3>
+                    <ul class="breadcrumbs mb-3">
+                      <li class="nav-home">
+                        <a {% if request.user.statue == 'admin' %} href=" {% url 'admin_tontine:dashboard' %}" {% else %} href=" {% url 'user_tontine:user_dashboard' %}" {% endif %} >
+                          <i class="icon-home"></i>
+                        </a>
+                      </li>
+                      <li class="separator">
+                        <i class="icon-arrow-right"></i>
+                      </li>
+                      <li class="nav-item">
+                        <a href="{% if request.user.statue == 'admin' %}{% url 'tontine:detail_tontine' tontine.uid %}{% else %}{% url 'user_tontine:tontine_collective' tontine.uid %}{% endif %}">Tontine</a>
+                      </li>
+                      <li class="separator">
+                        <i class="icon-arrow-right"></i>
+                      </li>
+                      <li class="nav-item">
+                        <a href="#">Historique</a>
+                      </li>
+                    </ul>
+                  </div>
 
-                    <div class="col">
-                        <h4 class="card-title">La liste des tontines collectives</h4>
-                    </div>
-                    
-                    <div class="col-4">
-                        <form action="" method="get">
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <button type="submit" class="btn btn-search pe-1" name="search">
-                                        <i class="fa fa-search search-icon"></i>
-                                    </button>
-                                </div>
-                                <input type="text" placeholder="recherche ..." name="search_value" class="form-control" />
-                            </div>
-                        </form>
-                    </div>
 
-                    </div>
-                    <div class="card-body">
-                    <div class="table-responsive">
-                        <table
-                        id="basic-datatables"
-                        class="display table table-striped table-hover"
-                        >
-                        <thead>
-                            <tr>
-                            <th colspan="2" class="text-center">Nom de la tontine</th>
-                            <th>Date creation</th>
-                            <th>Admin</th>
-                            <th>inscrit</th>
-                            </tr>
-                        </thead>
-                        <tfoot>
-                            <tr>
-                                <th colspan="2" class="text-center">Nom de la tontine</th>
-                                <th>Date creation</th>
-                                <th>Admin</th>
-                                <th>inscrit</th>
-                            </tr>
-                        </tfoot>
-                        <tbody>
-                            <tr>
-                            {% for tontine in tontines %}
-                            <td>
-                                <a href="{% if request.user.statue == 'admin' %} {% url 'tontine:detail_tontine' tontine.uid %} {% else %}  {% url 'user_tontine:tontine_collective' tontine.uid %} {% endif %}" class="btn btn-icon btn-round btn-success btn-sm me-2">
-                                <i class="fa fa-hand-holding-usd"></i>
-                            </td>
-                            <td> {{tontine.name}} </td>
-                            <td> {{tontine.create_at}} </td>
-                            <td> {{tontine.admin.first_name}} </td>
-                            <td>  {{tontine.total_members}} /{{tontine.limite_member}} </td>
-                            </tr>
-                            {% empty %}
-                                <p class='text-center'> pas de tontine disponible </p>
-                            {% endfor %}
-                        </tbody>
-                        </table>
-                    </div>
-                    </div>
                 </div>
-                </div>
+              </div>
 
+
+
+
+              <div class="card-body">
+                <div class="table-responsive">
+                  <!-- Table pour les paiements -->
+                  <h5>Paiements effectués</h5>
+                  <table id="payement-table" class="table table-striped table-hover">
+                    <thead>
+                      <tr>
+                        <th>Date</th>
+                        <th>Montant</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for paiement in payement %}
+                        <tr>
+                          <td>{{ paiement.date }}</td>
+                          <td>{{ paiement.amount }}</td>
+                          <td>{{ paiement.status }}</td>
+                        </tr>
+                      {% empty %}
+                        <tr>
+                          <td colspan="3" class="text-center">Pas encore ete payer pour cette tontine</td>
+                        </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+
+                  <hr>
+
+                  <!-- Table pour les acquitements -->
+                  <h5>Acquitements</h5>
+                  <table id="acquitement-table" class="table table-striped table-hover">
+                    <thead>
+                      <tr>
+                        <th>Date</th>
+                        <th>Montant</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for acquit in acquitement %}
+                        <tr>
+                          <td>{{ acquit.date }}</td>
+                          <td>{{ acquit.amount }}</td>
+                          <td><i class="fa fa-check-circle me-2 text-success"></i></td>
+                        </tr>
+                      {% empty %}
+                        <tr>
+                          <td colspan="3" class="text-center">Aucun acquitement trouvé</td>
+                        </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             </div>
+          </div>
         </div>
-    </div>
-    
-
-   <!-- la fin du message toast -->
-        
-       <!-- Toast -->
-            {% if messages %}
-              {% for message in messages %}
-                <div id="liveToast{{ forloop.counter }}" class="toast align-items-center text-bg-dark border-0" role="alert" aria-live="assertive" aria-atomic="true" style="position: fixed; bottom: 10px; right: 10px; z-index: 1050;">
-                  <div class="toast-header">
-                   <i class="fa-regular fa-bell me-2"></i>
-                    <strong class="me-auto">Notifications</strong>
-                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Fermer"></button>
-                  </div>
-                  <div class="toast-body {% if 'success' in message.tags %} text-success {% else %} text-danger {% endif %}">
-                    {{ message }}
-                  </div>
-                </div>
-              {% endfor %}
-            {% endif %}
-
-        <script>
-          // Affichage automatique des toasts au chargement
-          window.addEventListener('load', () => {
-            {% for message in messages %}
-              const toastLiveExample = document.getElementById('liveToast{{ forloop.counter }}');
-              if (toastLiveExample) {
-                const toastBootstrap = new bootstrap.Toast(toastLiveExample, { delay: 5000 });
-                toastBootstrap.show();
-              }
-            {% endfor %}
-          });
-        </script>
-
-
+      </div>
 
   </div>
+</div>
 
-
-{% endblock  %}
-
-
-            
-        </div>
-    </div>
-    
-
-   <!-- la fin du message toast -->
-        
-       <!-- Toast -->
-            {% if messages %}
-              {% for message in messages %}
-                <div id="liveToast{{ forloop.counter }}" class="toast align-items-center text-bg-dark border-0" role="alert" aria-live="assertive" aria-atomic="true" style="position: fixed; bottom: 10px; right: 10px; z-index: 1050;">
-                  <div class="toast-header">
-                   <i class="fa-regular fa-bell me-2"></i>
-                    <strong class="me-auto">Notifications</strong>
-                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Fermer"></button>
-                  </div>
-                  <div class="toast-body {% if 'success' in message.tags %} text-success {% else %} text-danger {% endif %}">
-                    {{ message }}
-                  </div>
-                </div>
-              {% endfor %}
-            {% endif %}
-
-        <script>
-          // Affichage automatique des toasts au chargement
-          window.addEventListener('load', () => {
-            {% for message in messages %}
-              const toastLiveExample = document.getElementById('liveToast{{ forloop.counter }}');
-              if (toastLiveExample) {
-                const toastBootstrap = new bootstrap.Toast(toastLiveExample, { delay: 5000 });
-                toastBootstrap.show();
-              }
-            {% endfor %}
-          });
-        </script>
-
-
-
-  </div>
-
-
-{% endblock  %}
-
+{% endblock %}

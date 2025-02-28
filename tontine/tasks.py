@@ -1,8 +1,12 @@
 from celery import shared_task
 from django.core.mail import send_mail
-from .models import TontineCollective
-from config.settings import DEFAULT_FROM_EMAIL
 from django.shortcuts import get_object_or_404
+
+from .models import Blocked_user
+from .models import TontineCollective
+from account.models import User
+from config.settings import DEFAULT_FROM_EMAIL
+
 
 @shared_task
 def reminder_paiement_for_day():
@@ -18,13 +22,16 @@ def reminder_paiement_for_day():
                     [email],
                     fail_silently=False,
                 )
+        blocked_users_ids = Blocked_user.objects.filter(
+            tontine=tontine).values_list('user_id', flat=True)
 
-        for blocked in tontine.blocked_members:
+        for user_id in blocked_users_ids:
+            blocked_user = User.objects.get(id=user_id)
             send_mail(
-                subject= 'ALERTE ',
-                message= f'Vous avez été bloquer de la tontine {tontine.name} pour des raisons de non paiement',
+                subject='ALERTE',
+                message=f'Vous avez été bloqué de la tontine {tontine.name} pour des raisons de non-paiement',
                 from_email=DEFAULT_FROM_EMAIL,
-                recipient_list=[blocked.email]
+                recipient_list=[blocked_user.email]
             )
 
 
@@ -42,6 +49,7 @@ def reminder_paiement_for_week():
                     [email],
                     fail_silently=False,
                 )
+
 
 @shared_task
 def reminder_paiement_for_month():
@@ -66,14 +74,15 @@ def recipient_date():
         if tontine.periode_amount >= tontine.objectif:
             send_mail(
                 subject='RAPPEL DE PAIEMENT',
-                message= f' chere administrateur la tontine {tontine.name} a atteinte la fin de sa periode vous pouvez payer le preneur merci',
+                message=f' chere administrateur la tontine {tontine.name} a atteinte la fin de sa periode vous pouvez payer le preneur merci',
                 from_email=DEFAULT_FROM_EMAIL,
                 recipient_list=[tontine.admin.email]
             )
 
+
 @shared_task
 def mail_for_start_tontine(tontine_id):
-    tontine = get_object_or_404(TontineCollective,pk=tontine_id)
+    tontine = get_object_or_404(TontineCollective, pk=tontine_id)
     admin = tontine.admin
     send_mail(
         'DEMARAGE',
@@ -82,9 +91,10 @@ def mail_for_start_tontine(tontine_id):
         recipient_list=[admin.email]
     )
 
+
 @shared_task
 def starte_tontine(tontine_id):
-    tontine = get_object_or_404(TontineCollective,pk=tontine_id)
+    tontine = get_object_or_404(TontineCollective, pk=tontine_id)
     user_liste = [member.email for member in tontine.members.all()]
     for email in user_liste:
         send_mail(
@@ -94,3 +104,30 @@ def starte_tontine(tontine_id):
             [email],
             fail_silently=False,
         )
+
+
+@shared_task
+def bloked_worker():
+    tontines = TontineCollective.objects.all()
+    for tontine in tontines:
+        if tontine.unpaid_members is None:
+            return []
+        else:
+            for block in tontine.blocked_members:
+                user = block['user']
+                amount_due = block['amount_due']
+                days_overdue = block['days_overdue']
+
+                if not Blocked_user.objects.filter(user=user).exists():
+                    Blocked_user.objects.create(
+                        tontine=tontine,
+                        user=user,
+                        amount_due=amount_due,
+                        days_overdue=days_overdue
+                    )
+                    send_mail(
+                        subject='ALERTE ',
+                        message=f'Vous avez été bloquer de la tontine {tontine.name} pour des raisons de non paiement',
+                        from_email=DEFAULT_FROM_EMAIL,
+                        recipient_list=[user.email]
+                    )
