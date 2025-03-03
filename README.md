@@ -1,20 +1,4 @@
 
-
-### Étapes pour ajouter à votre dépôt Git :
-
-1. **Créer un fichier de documentation :**
-   - Dans votre terminal, accédez à la racine de votre projet.
-   ```bash
-   cd tontine_app
-   ```
-   - Créez un fichier `README.md` (ou un autre fichier de votre choix).
-   ```bash
-   touch README.md
-   ```
-
-2. **Ajouter les instructions au fichier `README.md` :**
-   - Ouvrez le fichier `README.md` dans votre éditeur de code et copiez-y les instructions ci-dessous.
-
 ```markdown
 # Guide de Configuration et de Lancement du Projet
 
