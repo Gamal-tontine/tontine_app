@@ -50,31 +50,17 @@ docker-compose up -d
 
 1. **Lancer Celery :**
 ```bash
-celery -A <nom_du_projet> worker --pool=solo --loglevel=info
+celery -A config worker --pool=solo --loglevel=info
 ```
 
 2. **Lancer Celery Beat :**
 ```bash
-celery -A <nom_du_projet> beat --loglevel=info
+celery -A config beat --loglevel=info
 ```
 
 Vous êtes maintenant prêt à utiliser l'application.
 ```
 
-3. **Ajouter et valider les modifications dans Git :**
-   - Dans votre terminal, ajoutez le fichier `README.md` aux modifications.
-   ```bash
-   git add README.md
-   ```
 
-   - Validez les modifications avec un message de validation.
-   ```bash
-   git commit -m "Ajout du guide de configuration et de lancement du projet"
-   ```
-
-   - Poussez les modifications vers votre dépôt distant.
-   ```bash
-   git push origin new-versions-1
-   ```
 
 
