@@ -1,4 +1,4 @@
-Parfait ! Voici comment vous pouvez ajouter ce guide à votre dépôt Git. Vous pouvez créer un fichier `README.md` ou tout autre fichier de documentation dans votre projet et y ajouter les instructions.
+
 
 ### Étapes pour ajouter à votre dépôt Git :
 
@@ -93,4 +93,4 @@ Vous êtes maintenant prêt à utiliser l'application.
    git push origin new-versions-1
    ```
 
-Voilà, vos instructions sont maintenant ajoutées à votre dépôt Git. Si vous avez besoin de plus d'aide, je suis là pour vous !
+
