@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="GareRoutiereModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="Chauffeur">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="nom" Type="varchar" MaxLength="50" Nullable="false" />
+    <Property Name="prenom" Type="varchar" MaxLength="50" Nullable="false" />
+    <Property Name="permis" Type="varchar" MaxLength="20" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Passager">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="nom" Type="varchar" MaxLength="50" Nullable="false" />
+    <Property Name="prenom" Type="varchar" MaxLength="50" Nullable="false" />
+    <Property Name="voiture_id" Type="int" />
+  </EntityType>
+  <EntityType Name="Voiture">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="marque" Type="varchar" MaxLength="50" Nullable="false" />
+    <Property Name="modele" Type="varchar" MaxLength="50" Nullable="false" />
+    <Property Name="immatriculation" Type="varchar" MaxLength="20" Nullable="false" />
+    <Property Name="chauffeur_id" Type="int" />
+    <Property Name="place" Type="int" />
+    <Property Name="depart" Type="nchar" MaxLength="10" />
+    <Property Name="destination" Type="nchar" MaxLength="10" />
+    <Property Name="heure_depart" Type="nchar" MaxLength="10" />
+  </EntityType>
+  <Association Name="FK__Passager__voitur__182C9B23">
+    <End Role="Voiture" Type="Self.Voiture" Multiplicity="0..1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="Passager" Type="Self.Passager" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Voiture">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="Passager">
+        <PropertyRef Name="voiture_id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__Voiture__chauffe__15502E78">
+    <End Role="Chauffeur" Type="Self.Chauffeur" Multiplicity="0..1" />
+    <End Role="Voiture" Type="Self.Voiture" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Chauffeur">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="Voiture">
+        <PropertyRef Name="chauffeur_id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="GareRoutiereModelStoreContainer">
+    <EntitySet Name="Chauffeur" EntityType="Self.Chauffeur" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Passager" EntityType="Self.Passager" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Voiture" EntityType="Self.Voiture" Schema="dbo" store:Type="Tables" />
+    <AssociationSet Name="FK__Passager__voitur__182C9B23" Association="Self.FK__Passager__voitur__182C9B23">
+      <End Role="Voiture" EntitySet="Voiture" />
+      <End Role="Passager" EntitySet="Passager" />
+    </AssociationSet>
+    <AssociationSet Name="FK__Voiture__chauffe__15502E78" Association="Self.FK__Voiture__chauffe__15502E78">
+      <End Role="Chauffeur" EntitySet="Chauffeur" />
+      <End Role="Voiture" EntitySet="Voiture" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>

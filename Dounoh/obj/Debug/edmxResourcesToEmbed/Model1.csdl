@@ -1,0 +1,78 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="GareRoutiereModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="Chauffeur">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="nom" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="prenom" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="permis" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+    <NavigationProperty Name="Voiture" Relationship="Self.FK__Voiture__chauffe__15502E78" FromRole="Chauffeur" ToRole="Voiture" />
+  </EntityType>
+  <EntityType Name="Passager">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="nom" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="prenom" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="voiture_id" Type="Int32" />
+    <NavigationProperty Name="Voiture" Relationship="Self.FK__Passager__voitur__182C9B23" FromRole="Passager" ToRole="Voiture" />
+  </EntityType>
+  <EntityType Name="Voiture">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="marque" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="modele" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="immatriculation" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="chauffeur_id" Type="Int32" />
+    <Property Name="place" Type="Int32" />
+    <Property Name="depart" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
+    <Property Name="destination" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
+    <Property Name="heure_depart" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
+    <NavigationProperty Name="Chauffeur" Relationship="Self.FK__Voiture__chauffe__15502E78" FromRole="Voiture" ToRole="Chauffeur" />
+    <NavigationProperty Name="Passager" Relationship="Self.FK__Passager__voitur__182C9B23" FromRole="Voiture" ToRole="Passager" />
+  </EntityType>
+  <Association Name="FK__Voiture__chauffe__15502E78">
+    <End Role="Chauffeur" Type="Self.Chauffeur" Multiplicity="0..1" />
+    <End Role="Voiture" Type="Self.Voiture" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Chauffeur">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="Voiture">
+        <PropertyRef Name="chauffeur_id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__Passager__voitur__182C9B23">
+    <End Role="Voiture" Type="Self.Voiture" Multiplicity="0..1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="Passager" Type="Self.Passager" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Voiture">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="Passager">
+        <PropertyRef Name="voiture_id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="GareRoutiereEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="Chauffeur" EntityType="Self.Chauffeur" />
+    <EntitySet Name="Passager" EntityType="Self.Passager" />
+    <EntitySet Name="Voiture" EntityType="Self.Voiture" />
+    <AssociationSet Name="FK__Voiture__chauffe__15502E78" Association="Self.FK__Voiture__chauffe__15502E78">
+      <End Role="Chauffeur" EntitySet="Chauffeur" />
+      <End Role="Voiture" EntitySet="Voiture" />
+    </AssociationSet>
+    <AssociationSet Name="FK__Passager__voitur__182C9B23" Association="Self.FK__Passager__voitur__182C9B23">
+      <End Role="Voiture" EntitySet="Voiture" />
+      <End Role="Passager" EntitySet="Passager" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>
